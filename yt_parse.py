@@ -33,7 +33,7 @@ def parse_subs(filename):
 
 def get_ffmpeg():
 	op_s = os.name
-	return os.path.join(home, "ffmpeg/ffmpeg.exe") if op_s == "nt" else os.path.join(home, "ffmpeg/ffmpeg")
+	return os.path.join(home, "ffmpeg/ffmpeg.exe") if op_s == "nt" else "ffmpeg"
 
 
 def crop_bottom(img, to_crop):
