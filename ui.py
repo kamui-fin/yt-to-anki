@@ -1,14 +1,4 @@
-# -*- coding: utf-8 -*-
-
-# self implementation generated from reading ui file 'yt_srs.ui'
-#
-# Created by: PyQt5 UI code generator 5.14.0
-#
-# WARNING! All changes made in this file will be lost!
-
-
-from PyQt5 import QtCore, QtGui, QtWidgets
-
+from PyQt5 import QtCore, QtWidgets
 
 class Window(QtWidgets.QWidget):
 	def __init__(self):
@@ -19,10 +9,10 @@ class Window(QtWidgets.QWidget):
 		self.link_box.setGeometry(QtCore.QRect(10, 26, 501, 20))
 		self.link_box.setObjectName("link_box")
 		self.label = QtWidgets.QLabel(self)
-		self.label.setGeometry(QtCore.QRect(10, 10, 55, 13))
+		self.label.setGeometry(QtCore.QRect(10, 10, 75, 13))
 		self.label.setObjectName("label")
 		self.label_2 = QtWidgets.QLabel(self)
-		self.label_2.setGeometry(QtCore.QRect(10, 60, 71, 16))
+		self.label_2.setGeometry(QtCore.QRect(10, 60, 80, 16))
 		self.label_2.setObjectName("label_2")
 		self.output_box = QtWidgets.QLineEdit(self)
 		self.output_box.setGeometry(QtCore.QRect(10, 80, 471, 20))
@@ -31,7 +21,7 @@ class Window(QtWidgets.QWidget):
 		self.groupBox.setGeometry(QtCore.QRect(10, 120, 311, 241))
 		self.groupBox.setObjectName("groupBox")
 		self.label_3 = QtWidgets.QLabel(self.groupBox)
-		self.label_3.setGeometry(QtCore.QRect(10, 20, 60, 13))
+		self.label_3.setGeometry(QtCore.QRect(10, 20, 65, 16))
 		self.label_3.setObjectName("label_3")
 		self.comboBox = QtWidgets.QComboBox(self.groupBox)
 		self.comboBox.setGeometry(QtCore.QRect(10, 40, 121, 22))
@@ -46,7 +36,7 @@ class Window(QtWidgets.QWidget):
 		self.comboBox_3.setGeometry(QtCore.QRect(10, 100, 121, 22))
 		self.comboBox_3.setObjectName("comboBox_3")
 		self.label_5 = QtWidgets.QLabel(self.groupBox)
-		self.label_5.setGeometry(QtCore.QRect(10, 80, 61, 16))
+		self.label_5.setGeometry(QtCore.QRect(10, 80, 65, 16))
 		self.label_5.setObjectName("label_5")
 		self.comboBox_4 = QtWidgets.QComboBox(self.groupBox)
 		self.comboBox_4.setGeometry(QtCore.QRect(170, 100, 121, 22))
@@ -99,15 +89,9 @@ class Window(QtWidgets.QWidget):
 		self.label_14 = QtWidgets.QLabel(self.groupBox_3)
 		self.label_14.setGeometry(QtCore.QRect(60, 50, 16, 16))
 		self.label_14.setObjectName("label_14")
-		self.crop_bottom_box = QtWidgets.QSpinBox(self.groupBox_3)
-		self.crop_bottom_box.setGeometry(QtCore.QRect(10, 110, 42, 22))
-		self.crop_bottom_box.setObjectName("crop_bottom_box")
 		self.label_15 = QtWidgets.QLabel(self.groupBox_3)
 		self.label_15.setGeometry(QtCore.QRect(60, 110, 16, 16))
 		self.label_15.setObjectName("label_15")
-		self.label_16 = QtWidgets.QLabel(self.groupBox_3)
-		self.label_16.setGeometry(QtCore.QRect(10, 90, 71, 16))
-		self.label_16.setObjectName("label_16")
 		self.height_box = QtWidgets.QSpinBox(self.groupBox_3)
 		self.height_box.setGeometry(QtCore.QRect(100, 50, 42, 22))
 		self.height_box.setObjectName("height_box")
@@ -123,10 +107,10 @@ class Window(QtWidgets.QWidget):
 		self.groupBox_4.setGeometry(QtCore.QRect(330, 280, 181, 131))
 		self.groupBox_4.setObjectName("groupBox_4")
 		self.fallback_check = QtWidgets.QCheckBox(self.groupBox_4)
-		self.fallback_check.setGeometry(QtCore.QRect(10, 30, 151, 17))
+		self.fallback_check.setGeometry(QtCore.QRect(10, 30, 163, 17))
 		self.fallback_check.setObjectName("fallback_check")
 		self.label_19 = QtWidgets.QLabel(self.groupBox_4)
-		self.label_19.setGeometry(QtCore.QRect(10, 60, 47, 21))
+		self.label_19.setGeometry(QtCore.QRect(10, 60, 57, 21))
 		self.label_19.setObjectName("label_19")
 		self.subs_lang_box = QtWidgets.QComboBox(self.groupBox_4)
 		self.subs_lang_box.setGeometry(QtCore.QRect(70, 60, 91, 22))
@@ -135,7 +119,7 @@ class Window(QtWidgets.QWidget):
 		self.limit_box.setGeometry(QtCore.QRect(230, 380, 42, 22))
 		self.limit_box.setObjectName("limit_box")
 		self.label_20 = QtWidgets.QLabel(self)
-		self.label_20.setGeometry(QtCore.QRect(150, 380, 81, 21))
+		self.label_20.setGeometry(QtCore.QRect(130, 380, 90, 21))
 		self.label_20.setObjectName("label_20")
 		self.label_21 = QtWidgets.QLabel(self)
 		self.label_21.setGeometry(QtCore.QRect(280, 380, 41, 21))
@@ -150,7 +134,6 @@ class Window(QtWidgets.QWidget):
 		self.retranslateUi()
 		QtCore.QMetaObject.connectSlotsByName(self)
 		
-
 	def retranslateUi(self):
 		_translate = QtCore.QCoreApplication.translate
 		self.setWindowTitle(_translate("self", "YT Subs2Srs"))
@@ -165,18 +148,15 @@ class Window(QtWidgets.QWidget):
 		self.groupBox_3.setTitle(_translate("self", "Picture Settings"))
 		self.label_13.setText(_translate("self", "Width"))
 		self.label_14.setText(_translate("self", "px"))
-		self.label_15.setText(_translate("self", "px"))
-		self.label_16.setText(_translate("self", "Crop Bottom"))
 		self.label_17.setText(_translate("self", "px"))
 		self.label_18.setText(_translate("self", "Height"))
 		self.groupBox_4.setTitle(_translate("self", "Subtitle Settings"))
-		self.fallback_check.setText(_translate("self", " Fallback to auto gen subs"))
+		self.fallback_check.setText(_translate("self", " Fallback to auto captions"))
 		self.label_19.setText(_translate("self", "Language"))
 		self.label_20.setText(_translate("self", "Limit (optional)"))
 		self.label_21.setText(_translate("self", "0 = Off"))
 		self.generate_button.setText(_translate("self", "Generate!"))
 		self.choose_dir_button.setText(_translate("self", "..."))
-
 
 def run():
 	import sys
@@ -184,4 +164,3 @@ def run():
 	screen = Window()
 	screen.show()
 	sys.exit(app.exec_())
-
