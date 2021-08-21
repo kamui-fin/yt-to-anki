@@ -2,8 +2,8 @@ from PyQt5 import QtWidgets
 from ui import Window
 from constants import *
 import os
-import parser
 from aqt import mw
+import worker
 
 class MW(Window):
 
@@ -76,7 +76,7 @@ class MW(Window):
             self.error("Invalid output folder")
             return
 
-        parser.create_subs2srs_deck(**self.config)
+        worker.create_subs2srs_deck(**self.config)
 
 
     def error(self, text,title="Error has occured"):
