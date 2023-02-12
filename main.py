@@ -2,9 +2,9 @@ from PyQt5 import QtWidgets
 from ui import Window
 from anki.collection import Collection
 
+from constants import lang_list, LANGUAGES
 from models import GenerateVideoTask, FieldsConfiguration
 
-from constants import *
 import os
 from aqt import mw
 import worker
@@ -38,7 +38,7 @@ class MW(Window):
 
     def get_fields(self):
         fields_res = self.col.db.all(
-            "SELECT notetypes.name, FIELDS.name FROM FIELDS INNER JOIN notetypes ON FIELDS.ntid = notetypes.id"
+            "SELECT notetypes.name, FIELDS.name FROM FIELDS INNER JOIN notetypes ON FIELDS.ntid = notetypes.id"  # noqa: E501
         )
         fields = []
 

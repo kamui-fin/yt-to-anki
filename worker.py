@@ -183,7 +183,7 @@ class GenThread(QtCore.QThread):
 
             try:
                 check_output(command, shell=True)
-            except:
+            except:  # noqa: E722 # FIXME: Do not use bare `except`
                 continue
 
             p_name = os.path.join(
@@ -210,7 +210,7 @@ class GenThread(QtCore.QThread):
 
             try:
                 check_output(command, shell=True)
-            except:
+            except:  # noqa: E722 # FIXME: Do not use bare `except`
                 continue
 
             sub.add_paths_to_picture_and_audio(
