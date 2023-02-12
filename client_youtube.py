@@ -19,9 +19,7 @@ class SubtitleRange:
         self.path_to_picture: Optional[str] = None
         self.path_to_audio: Optional[str] = None
 
-    def add_paths_to_picture_and_audio(
-        self, path_to_picture: str, path_to_audio: str
-    ):
+    def add_paths_to_picture_and_audio(self, path_to_picture: str, path_to_audio: str):
         assert os.path.isfile(path_to_picture), path_to_picture
         assert os.path.isfile(path_to_audio), path_to_audio
         self.path_to_picture = path_to_picture
@@ -119,7 +117,6 @@ class YouTubeClient:
         )
         vid_opts = {
             "no_color": True,
-
             # Careful with this line. When the warnings are enabled, the program
             # crashes in youtube-dl code with:
             # if not self.params.get('no_color') and self._err_file.isatty() and compat_os_name != 'nt':
@@ -130,7 +127,6 @@ class YouTubeClient:
             # https://github.com/kamui-fin/yt2srs/issues/1
             # https://github.com/ytdl-org/youtube-dl/issues/28914
             "no_warnings": True,
-
             "outtmpl": video_output_file_template,
             "quiet": True,
         }
@@ -161,7 +157,7 @@ class YouTubeClient:
                 )[0]
             except IndexError:
                 break  # reached end of subs
-            line = "".join(chunk.split("\n")[1:])
+            line = " ".join(chunk.split("\n")[1:])
             subtitles.append(
                 SubtitleRange(
                     text=line,

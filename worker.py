@@ -2,9 +2,6 @@ import time
 import datetime
 from typing import Optional, List
 
-import youtube_dl
-import re, pathlib
-from glob import glob
 import os
 from aqt import mw
 from PyQt5 import QtCore, QtWidgets
@@ -185,7 +182,7 @@ class GenThread(QtCore.QThread):
             )
 
             try:
-                output = check_output(command, shell=True)
+                check_output(command, shell=True)
             except:
                 continue
 
@@ -212,7 +209,7 @@ class GenThread(QtCore.QThread):
             )
 
             try:
-                output = check_output(command, shell=True)
+                check_output(command, shell=True)
             except:
                 continue
 
