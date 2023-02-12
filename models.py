@@ -1,3 +1,5 @@
+import os
+
 from anki.collection import Collection
 
 
@@ -43,3 +45,7 @@ class GenerateVideoTask:
         self.collection: Collection = collection
         self.output_dir: str = output_dir
         self.fields: FieldsConfiguration = fields
+
+        self.home = os.path.dirname(os.path.abspath(__file__))
+        self.path_to_downloaded_videos = os.path.join(self.home, "vid")
+        self.path_to_downloaded_subtitles = os.path.join(self.home, "subs")
