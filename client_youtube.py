@@ -119,7 +119,18 @@ class YouTubeClient:
         )
         vid_opts = {
             "no_color": True,
+
+            # Careful with this line. When the warnings are enabled, the program
+            # crashes in youtube-dl code with:
+            # if not self.params.get('no_color') and self._err_file.isatty() and compat_os_name != 'nt':
+            # AttributeError: 'ErrorHandler' object has no attribute 'isatty'
+            # The problem is that Anki modifies the sys.stderr with a custom
+            # Error Handler which does not support the methods like isatty()
+            # and flush().
+            # https://github.com/kamui-fin/yt2srs/issues/1
+            # https://github.com/ytdl-org/youtube-dl/issues/28914
             "no_warnings": True,
+
             "outtmpl": video_output_file_template,
             "quiet": True,
         }
