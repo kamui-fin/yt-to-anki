@@ -51,7 +51,7 @@ def lint_black_diff(context):
 def lint_ruff(context, fix=False):
     argument_fix = "--fix" if fix else ""
     command = f"""
-        ruff *.py {argument_fix} || true
+        ruff *.py {argument_fix}
     """
     run_invoke_cmd(context, command)
 

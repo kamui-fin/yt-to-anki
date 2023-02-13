@@ -1,4 +1,7 @@
-import os, sys
+# flake8: noqa: E402
+
+import os
+import sys
 
 home = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, home)
