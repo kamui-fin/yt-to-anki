@@ -9,6 +9,8 @@ from PyQt5 import QtCore, QtWidgets
 from aqt.utils import showInfo
 from subprocess import check_output
 
+from models import GenerateVideoTask, FieldsConfiguration
+
 home = os.path.dirname(os.path.abspath(__file__))
 sub_dir = os.path.join(home, "subs")
 vid_dir = os.path.join(home, "vid")
@@ -40,7 +42,7 @@ class DlBar(QtWidgets.QDialog):
     def __init__(self):
         super().__init__()
 
-    def setup_ui(self, **kwargs):
+    def setup_ui(self, *, task: GenerateVideoTask):
         self.resize(345, 70)
         self.progressBar = QtWidgets.QProgressBar(self)
         self.progressBar.setGeometry(QtCore.QRect(10, 20, 321, 23))
@@ -48,17 +50,17 @@ class DlBar(QtWidgets.QDialog):
         self.progressBar.setMinimum(0)
         self.progressBar.setMaximum(0)
 
-        self.freqthread = DlThread(kwargs["link"], kwargs["lang"], kwargs["fallback"])
+        self.freqthread = DlThread(task.youtube_video_url, task.language, task.fallback)
         self.freqthread.start()
-        self.freqthread.done.connect(lambda: self.finish_up(**kwargs))
+        self.freqthread.done.connect(lambda: self.finish_up(task=task))
         self.show()
 
-    def finish_up(self, **kwargs):
+    def finish_up(self, *, task):
         self.close()
         subs_name, vid_name, title = self.freqthread.sources
         subs = parse_subs(subs_name)
         dial = GenBar()
-        dial.setup_ui(subs, vid_name, title, **kwargs)
+        dial.setup_ui(subs, vid_name, title, task)
 
 
 class DlThread(QtCore.QThread):
@@ -107,7 +109,7 @@ class GenBar(QtWidgets.QDialog):
     def __init__(self):
         super().__init__()
 
-    def setup_ui(self, subs, vid_name, title, **kwargs):
+    def setup_ui(self, subs, vid_name, title, task: GenerateVideoTask):
         self.resize(350, 77)
         self.label = QtWidgets.QLabel(self)
         self.label.setGeometry(QtCore.QRect(140, 20, 75, 13))
@@ -119,13 +121,10 @@ class GenBar(QtWidgets.QDialog):
             subs,
             vid_name,
             title,
-            kwargs["output_dir"],
-            kwargs["limit"],
-            kwargs["dim"],
-            kwargs["note_type"],
-            kwargs["text_field"],
-            kwargs["audio_field"],
-            kwargs["pic_field"],
+            task.output_dir,
+            task.limit,
+            task.dimensions,
+            task.fields,
         )
         self.threadClass.start()
         self.threadClass.updateNum.connect(self.updateProgress)
@@ -185,10 +184,7 @@ class GenThread(QtCore.QThread):
         output_dir,
         limit,
         dim,
-        note_type,
-        text_field,
-        audio_field,
-        pic_field,
+        fields: FieldsConfiguration,
     ):
         self.info = info
         self.video = video
@@ -196,10 +192,7 @@ class GenThread(QtCore.QThread):
         self.output_dir = output_dir
         self.limit = limit
         self.dim = dim
-        self.note_type = note_type
-        self.text_field = text_field
-        self.audio_field = audio_field
-        self.pic_field = pic_field
+        self.fields: FieldsConfiguration = fields
         self.stop_flag = False
         super().__init__()
 
@@ -302,6 +295,6 @@ class GenThread(QtCore.QThread):
         self.finishTime.emit(finishedtime)
 
 
-def create_subs2srs_deck(**kwargs):
+def create_subs2srs_deck(*, task: GenerateVideoTask):
     dl_bar = DlBar()
-    dl_bar.setup_ui(**kwargs)
+    dl_bar.setup_ui(task=task)

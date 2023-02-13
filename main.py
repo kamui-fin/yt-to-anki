@@ -1,5 +1,9 @@
 from PyQt5 import QtWidgets
 from ui import Window
+from anki.collection import Collection
+
+from models import GenerateVideoTask, FieldsConfiguration
+
 from constants import *
 import os
 from aqt import mw
@@ -11,7 +15,6 @@ class MW(Window):
         super().__init__()
 
     def setup_ui(self):
-        self.config = {}
         self.col = mw.col
         notes = self.col.models.allNames()
         fields = self.get_fields()
@@ -46,49 +49,62 @@ class MW(Window):
         return fields
 
     def generate(self):
-        self.config["link"] = str(self.link_box.text())
+        youtube_video_url: str = str(self.link_box.text())
+        if not youtube_video_url.startswith("https://www.youtube.com/watch?v="):
+            self.error("Invalid youtube link")
+            return
 
         try:
-            self.config["lang"] = {v: k for k, v in LANGUAGES.items()}[
+            language: str = {v: k for k, v in LANGUAGES.items()}[
                 str(self.subs_lang_box.currentText())
             ]
         except KeyError:
             self.error("Please enter a language")
             return
 
-        self.config["fallback"] = bool(self.fallback_check.isChecked())
-        self.config["dim"] = f"{self.width_box.value()}x{self.height_box.value()}"
-        self.config["limit"] = self.limit_box.value()
-        self.config["col"] = self.col
-        self.config["output_dir"] = str(self.output_box.text())
-        self.config["note_type"] = str(self.note_box.currentText())
-        self.config["text_field"] = str(self.text_box.currentText()).split(": ")[-1]
-        self.config["audio_field"] = str(self.audio_box.currentText()).split(": ")[-1]
-        self.config["pic_field"] = str(self.pic_box.currentText()).split(": ")[-1]
+        fallback: bool = bool(self.fallback_check.isChecked())
+        dimensions: str = f"{self.width_box.value()}x{self.height_box.value()}"
+        limit: int = self.limit_box.value()
+        collection: Collection = self.col
 
-        if (
-            not self.config["pic_field"]
-            or not self.config["audio_field"]
-            or not self.config["text_field"]
-        ):
-            self.error("Please enter all fields")
-            return
-
-        if not self.config["note_type"]:
-            self.error("Please choose a note type")
-            return
-
-        if not self.config["link"].startswith("https://www.youtube.com/watch?v="):
-            self.error("Invalid youtube link")
-            return
-
-        if not os.path.isdir(self.config["output_dir"]):
+        output_dir: str = str(self.output_box.text())
+        if not os.path.isdir(output_dir):
             self.error("Invalid output folder")
             return
 
-        worker.create_subs2srs_deck(**self.config)
+        note_type: str = str(self.note_box.currentText())
+        if len(note_type) == 0:
+            self.error("Please choose a note type")
+            return
 
-    def error(self, text, title="Error has occured"):
+        text_field: str = str(self.text_box.currentText()).split(": ")[-1]
+        audio_field: str = str(self.audio_box.currentText()).split(": ")[-1]
+        picture_field: str = str(self.pic_box.currentText()).split(": ")[-1]
+
+        if len(text_field) == 0 or len(audio_field) == 0 or len(picture_field) == 0:
+            self.error("Please enter all fields")
+            return
+
+        fields: FieldsConfiguration = FieldsConfiguration(
+            note_type=note_type,
+            text_field=text_field,
+            audio_field=audio_field,
+            picture_field=picture_field,
+        )
+        task = GenerateVideoTask(
+            youtube_video_url=youtube_video_url,
+            language=language,
+            fallback=fallback,
+            dimensions=dimensions,
+            limit=limit,
+            collection=collection,
+            output_dir=output_dir,
+            fields=fields,
+        )
+        worker.create_subs2srs_deck(task=task)
+
+    @staticmethod
+    def error(text, title="Error has occured"):
         dialog = QtWidgets.QMessageBox()
         dialog.setWindowTitle(title)
         dialog.setText(text)

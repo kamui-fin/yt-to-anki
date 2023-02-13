@@ -1,4 +1,9 @@
+.idea/
 __pycache__/
 ffmpeg/
 youtube_dl/
+
+# Currently, the extension generates input here.
+subs/
+vid/
 
