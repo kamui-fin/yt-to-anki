@@ -1,7 +1,7 @@
 import os, sys
 
 home = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0,home)
+sys.path.insert(0, home)
 
 from aqt import mw
 from aqt.qt import *
