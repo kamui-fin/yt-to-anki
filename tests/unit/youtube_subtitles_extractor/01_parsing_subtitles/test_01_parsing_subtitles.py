@@ -1,7 +1,7 @@
 import os
 from typing import List
 
-from client_youtube import SubtitleRange, YouTubeClient
+from subtitles_extractor import YouTubeSubtitlesExtractor, SubtitleRange
 
 path_to_this_test_folder = os.path.abspath(os.path.dirname(__file__))
 path_to_the_subtitles_file = os.path.join(
@@ -11,7 +11,7 @@ path_to_the_subtitles_file = os.path.join(
 
 def test_01_parsing_subtitles():
     # https://www.youtube.com/watch?v=GfF2e0vyGM4
-    subtitles: List[SubtitleRange] = YouTubeClient._parse_subs(
+    subtitles: List[SubtitleRange] = YouTubeSubtitlesExtractor._parse_subs(
         path_to_the_subtitles_file
     )
 
