@@ -1,5 +1,7 @@
 import time
 import datetime
+from typing import Optional, List
+
 import youtube_dl
 import re, pathlib
 from glob import glob
@@ -9,31 +11,12 @@ from PyQt5 import QtCore, QtWidgets
 from aqt.utils import showInfo
 from subprocess import check_output
 
+from client_youtube import YouTubeDownloadResult, YouTubeClient, SubtitleRange
 from models import GenerateVideoTask, FieldsConfiguration
-
-home = os.path.dirname(os.path.abspath(__file__))
-sub_dir = os.path.join(home, "subs")
-vid_dir = os.path.join(home, "vid")
-
-
-def parse_subs(filename):
-    info = []
-    text = pathlib.Path(filename).read_text(encoding="utf-8")
-    chunked = re.split("\n\n", text)[1:]
-    for chunk in chunked:
-        try:
-            start, end = re.findall(
-                "(\d+:\d+:\d+\.\d+) --> (\d+:\d+:\d+\.\d+).*\n", chunk
-            )[0]
-        except IndexError:
-            break  # reached end of subs
-        line = "".join(chunk.split("\n")[1:])
-        info.append([start, end, line])
-
-    return info
 
 
 def get_ffmpeg():
+    home = os.path.dirname(os.path.abspath(__file__))
     op_s = os.name
     return os.path.join(home, "ffmpeg/ffmpeg.exe") if op_s == "nt" else "ffmpeg"
 
@@ -50,58 +33,29 @@ class DlBar(QtWidgets.QDialog):
         self.progressBar.setMinimum(0)
         self.progressBar.setMaximum(0)
 
-        self.freqthread = DlThread(task.youtube_video_url, task.language, task.fallback)
+        self.freqthread = DlThread(task=task)
         self.freqthread.start()
         self.freqthread.done.connect(lambda: self.finish_up(task=task))
         self.show()
 
     def finish_up(self, *, task):
         self.close()
-        subs_name, vid_name, title = self.freqthread.sources
-        subs = parse_subs(subs_name)
+        youtube_download_result: YouTubeDownloadResult = self.freqthread.sources
         dial = GenBar()
-        dial.setup_ui(subs, vid_name, title, task)
+        dial.setup_ui(task, youtube_download_result)
 
 
 class DlThread(QtCore.QThread):
     done = QtCore.pyqtSignal(bool)
 
-    def __init__(self, link, lang, fallback):
+    def __init__(self, *, task: GenerateVideoTask):
         super().__init__()
-        self.link = link
-        self.lang = lang
-        self.fallback = fallback
-        self.sources = ()
+        self.task: GenerateVideoTask = task
+        self.sources: Optional[YouTubeDownloadResult] = None
 
     def run(self):
-        ydl_opts = {
-            "subtitleslangs": [self.lang],
-            "skip_download": True,
-            "writesubtitles": True,
-            "outtmpl": os.path.join(sub_dir, "%(title)s-%(id)s.%(ext)s"),
-            "quiet": True,
-            "no_warnings": True,
-        }
-        opts_no_lang = {**ydl_opts, "writeautomaticsub": True}
-        vid_opts = {
-            "outtmpl": os.path.join(vid_dir, "%(title)s-%(id)s.%(ext)s"),
-            "quiet": True,
-            "no_warnings": True,
-        }  #
-
-        ydl = youtube_dl.YoutubeDL(ydl_opts)
-        ydl.download([self.link])
-
-        if self.fallback:
-            if not glob(sub_dir + "/*"):
-                ydl = youtube_dl.YoutubeDL(opts_no_lang)
-                ydl.download([self.link])
-
-        ydl = youtube_dl.YoutubeDL(vid_opts)
-        ydl.download([self.link])
-        title = ydl.extract_info(self.link, download=False)["title"]
-        dL_sources = (glob(sub_dir + "/*")[0], glob(vid_dir + "/*")[0], title)
-        self.sources = dL_sources
+        result: YouTubeDownloadResult = YouTubeClient.download_video_files(self.task)
+        self.sources = result
         self.done.emit(True)
 
 
@@ -109,7 +63,9 @@ class GenBar(QtWidgets.QDialog):
     def __init__(self):
         super().__init__()
 
-    def setup_ui(self, subs, vid_name, title, task: GenerateVideoTask):
+    def setup_ui(
+        self, task: GenerateVideoTask, youtube_download_result: YouTubeDownloadResult
+    ):
         self.resize(350, 77)
         self.label = QtWidgets.QLabel(self)
         self.label.setGeometry(QtCore.QRect(140, 20, 75, 13))
@@ -118,13 +74,8 @@ class GenBar(QtWidgets.QDialog):
         self.setWindowTitle("Adding cards")
         self.label.setText("Generating")
         self.threadClass = GenThread(
-            subs,
-            vid_name,
-            title,
-            task.output_dir,
-            task.limit,
-            task.dimensions,
-            task.fields,
+            task=task,
+            youtube_download_result=youtube_download_result,
         )
         self.threadClass.start()
         self.threadClass.updateNum.connect(self.updateProgress)
@@ -139,28 +90,31 @@ class GenBar(QtWidgets.QDialog):
     def showTime(self, duration):
         showInfo(f"Generated all cards in {str(duration)} seconds")
 
-    @QtCore.pyqtSlot(str, str, str, str, str, str, str, str)
+    @QtCore.pyqtSlot(SubtitleRange, str, FieldsConfiguration)
     def add_card(
-        self, text, raudio, rpic, title, note_type, text_field, audio_field, pic_field
+        self,
+        subtitle_range: SubtitleRange,
+        title: str,
+        fields: FieldsConfiguration,
     ):
         deckId = mw.col.decks.id(title)
         mw.col.decks.select(deckId)
-        basic_model = mw.col.models.byName(note_type)
+        basic_model = mw.col.models.byName(fields.note_type)
         basic_model["did"] = deckId
         mw.col.models.save(basic_model)
         mw.col.models.setCurrent(basic_model)
         senCard = mw.col.newNote()
-        senCard[text_field] = text
+        senCard[fields.text_field] = subtitle_range.text
 
         # Audio
-        audiofname = mw.col.media.addFile(raudio)
+        audiofname = mw.col.media.addFile(subtitle_range.path_to_audio)
         ankiaudiofname = "[sound:%s]" % audiofname
-        senCard[audio_field] = ankiaudiofname
+        senCard[fields.audio_field] = ankiaudiofname
 
         # Picture
-        picfname = mw.col.media.addFile(rpic)
+        picfname = mw.col.media.addFile(subtitle_range.path_to_picture)
         ankipicname = '<img src="%s">' % picfname
-        senCard[pic_field] = ankipicname
+        senCard[fields.picture_field] = ankipicname
 
         mw.col.addNote(senCard)
         mw.col.save()
@@ -174,25 +128,16 @@ class GenThread(QtCore.QThread):
     updateNum = QtCore.pyqtSignal(int)
     finished = QtCore.pyqtSignal(bool)
     finishTime = QtCore.pyqtSignal(float)
-    addToDeckSignal = QtCore.pyqtSignal(str, str, str, str, str, str, str, str)
+    addToDeckSignal = QtCore.pyqtSignal(SubtitleRange, str, FieldsConfiguration)
 
     def __init__(
         self,
-        info,
-        video,
-        vid_title,
-        output_dir,
-        limit,
-        dim,
-        fields: FieldsConfiguration,
+        task: GenerateVideoTask,
+        youtube_download_result: YouTubeDownloadResult,
     ):
-        self.info = info
-        self.video = video
-        self.vid_title = vid_title
-        self.output_dir = output_dir
-        self.limit = limit
-        self.dim = dim
-        self.fields: FieldsConfiguration = fields
+        self.task: GenerateVideoTask = task
+        self.youtube_download_result: YouTubeDownloadResult = youtube_download_result
+
         self.stop_flag = False
         super().__init__()
 
@@ -200,35 +145,36 @@ class GenThread(QtCore.QThread):
         self.stop_flag = True
 
     def run(self):
+        limit = self.task.limit
+
         ffmpeg = get_ffmpeg()
-        info = self.info[: self.limit] if self.limit else self.info
+        info: List[SubtitleRange] = self.youtube_download_result.subtitles[:limit]
         count = 0
         total_subs = len(info)
         timer_start = time.perf_counter()
 
         for sub in info:
             if self.stop_flag:
-                os.remove(self.video)
-                sub_file = glob(sub_dir + "/*")[0]
-                os.remove(sub_file)
+                os.remove(self.youtube_download_result.path_to_video)
+                os.remove(self.youtube_download_result.path_to_subtitles_file)
                 return
 
-            start, end, text = sub
-            startTime = datetime.datetime.strptime(start, "%H:%M:%S.%f")
-            endTime = datetime.datetime.strptime(end, "%H:%M:%S.%f")
+            startTime = datetime.datetime.strptime(sub.time_start, "%H:%M:%S.%f")
+            endTime = datetime.datetime.strptime(sub.time_end, "%H:%M:%S.%f")
             diff = endTime - startTime
 
             a_name = os.path.join(
-                self.output_dir,
-                f"{self.vid_title}_{str(start).replace('.','_').replace(':','_')}_{str(diff.total_seconds()).replace('.','_').replace(':','_')}.mp3",
+                self.task.output_dir,
+                f"{self.youtube_download_result.video_title}_{str(sub.time_start).replace('.','_').replace(':','_')}_{str(diff.total_seconds()).replace('.','_').replace(':','_')}.mp3",
             )
             command = (
                 ffmpeg
+                + " -y "  # Overwrite output file.
                 + " -ss "
                 + str(startTime.time())
                 + " -i "
                 + '"'
-                + self.video
+                + self.youtube_download_result.path_to_video
                 + '"'
                 + " -t 00:"
                 + str(diff.total_seconds())
@@ -244,19 +190,20 @@ class GenThread(QtCore.QThread):
                 continue
 
             p_name = os.path.join(
-                self.output_dir,
-                f"{self.vid_title}_{str(start).replace('.','_').replace(':','_')}.jpeg",
+                self.task.output_dir,
+                f"{self.youtube_download_result.video_title}_{str(sub.time_start).replace('.','_').replace(':','_')}.jpeg",
             )
             command = (
                 ffmpeg
+                + " -y "  # Overwrite output file.
                 + " -ss "
                 + str(startTime.time())
                 + " -i "
                 + '"'
-                + self.video
+                + self.youtube_download_result.path_to_video
                 + '" '
                 + "-s "
-                + self.dim
+                + self.task.dimensions
                 + " -vframes 1 -q:v 2 "
                 + "-loglevel quiet "
                 + '"'
@@ -269,28 +216,26 @@ class GenThread(QtCore.QThread):
             except:
                 continue
 
-            sub.extend([a_name, p_name])
+            sub.add_paths_to_picture_and_audio(
+                path_to_picture=p_name, path_to_audio=a_name
+            )
+
             count += 1
             percent = (count / total_subs) * 100
             self.updateNum.emit(percent)
 
-            *_, text, raudio, rpic = sub
             self.addToDeckSignal.emit(
-                text,
-                raudio,
-                rpic,
-                self.vid_title,
-                self.note_type,
-                self.text_field,
-                self.audio_field,
-                self.pic_field,
+                sub,
+                self.youtube_download_result.video_title,
+                self.task.fields,
             )
 
         timer_end = time.perf_counter()
         finishedtime = timer_end - timer_start
-        os.remove(self.video)
-        sub_file = glob(sub_dir + "/*")[0]
-        os.remove(sub_file)
+
+        os.remove(self.youtube_download_result.path_to_video)
+        os.remove(self.youtube_download_result.path_to_subtitles_file)
+
         self.finished.emit(True)
         self.finishTime.emit(finishedtime)
 
