@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "yt2srs"
+version = "0.1.0"
+description = "Simple anki addon to generate decks from youtube videos"
+authors = ["Kamui <fin-kamui@pm.me>"]
+license = "GPL-v3"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+youtube-dl = "^2021.12.17"
+mypy = "^1.0.0"
+aqt = {extras = ["qt6"], version = "^2.1.57"}
+
+
+[tool.poetry.group.dev.dependencies]
+invoke = "^2.0.0"
+black = "^23.1.0"
+pytest = "^7.2.1"
+ruff = "^0.0.246"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
