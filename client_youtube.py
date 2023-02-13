@@ -4,6 +4,7 @@ from glob import glob
 from typing import List
 
 import youtube_dl
+
 from models import GenerateVideoTask
 from subtitles_extractor import SubtitleRange, YouTubeSubtitlesExtractor
 
@@ -40,7 +41,7 @@ class YouTubeClient:
         video_info = YouTubeClient._download_video(video_task=video_task)
         title = video_info["title"]
 
-        print(f"yt2srs: YouTubeClient: " f"downloaded video: {title}")
+        print(f"yt2srs: YouTubeClient: downloaded video: {title}")
 
         path_to_video = glob(video_task.path_to_downloaded_videos + "/*")[0]
         path_to_subtitles_file = glob(video_task.path_to_downloaded_subtitles + "/*")[0]

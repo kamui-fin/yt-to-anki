@@ -1,13 +1,13 @@
-from PyQt5 import QtWidgets
-from ui import Window
-from anki.collection import Collection
-
-from constants import lang_list, LANGUAGES
-from models import GenerateVideoTask, FieldsConfiguration
-
 import os
+
+from anki.collection import Collection
 from aqt import mw
+from PyQt5 import QtWidgets
+
 import worker
+from constants import LANGUAGES, lang_list
+from models import FieldsConfiguration, GenerateVideoTask
+from ui import Window
 
 
 class MW(Window):

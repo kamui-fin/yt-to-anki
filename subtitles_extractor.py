@@ -1,7 +1,7 @@
 import os
 import pathlib
 import re
-from typing import Optional, List
+from typing import List, Optional
 
 
 class SubtitleRange:
@@ -30,7 +30,7 @@ class YouTubeSubtitlesExtractor:
         for chunk in chunked:
             try:
                 start, end = re.findall(
-                    "(\d+:\d+:\d+\.\d+) --> (\d+:\d+:\d+\.\d+).*\n", chunk
+                    "(\\d+:\\d+:\\d+\\.\\d+) --> (\\d+:\\d+:\\d+\\.\\d+).*\n", chunk
                 )[0]
             except IndexError:
                 break  # reached end of subs
