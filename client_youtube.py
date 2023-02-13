@@ -1,29 +1,11 @@
 import os
-import pathlib
-import re
 import shutil
 from glob import glob
-from typing import List, Optional
+from typing import List
 
 import youtube_dl
 from models import GenerateVideoTask
-
-
-class SubtitleRange:
-    def __init__(self, text: str, time_start: str, time_end: str):
-        self.text: str = text
-        self.time_start: str = time_start
-        self.time_end: str = time_end
-
-        # Injected later when the picture and audio are produced.
-        self.path_to_picture: Optional[str] = None
-        self.path_to_audio: Optional[str] = None
-
-    def add_paths_to_picture_and_audio(self, path_to_picture: str, path_to_audio: str):
-        assert os.path.isfile(path_to_picture), path_to_picture
-        assert os.path.isfile(path_to_audio), path_to_audio
-        self.path_to_picture = path_to_picture
-        self.path_to_audio = path_to_audio
+from subtitles_extractor import SubtitleRange, YouTubeSubtitlesExtractor
 
 
 class YouTubeDownloadResult:
@@ -63,7 +45,9 @@ class YouTubeClient:
         path_to_video = glob(video_task.path_to_downloaded_videos + "/*")[0]
         path_to_subtitles_file = glob(video_task.path_to_downloaded_subtitles + "/*")[0]
 
-        subs: List[SubtitleRange] = YouTubeClient._parse_subs(path_to_subtitles_file)
+        subs: List[SubtitleRange] = YouTubeSubtitlesExtractor._parse_subs(
+            path_to_subtitles_file
+        )
 
         result = YouTubeDownloadResult(
             video_title=title,
@@ -148,25 +132,3 @@ class YouTubeClient:
         )
         video_info = ydl.extract_info(video_task.youtube_video_url, download=False)
         return video_info
-
-    @staticmethod
-    def _parse_subs(filename) -> List[SubtitleRange]:
-        subtitles: List[SubtitleRange] = []
-        text = pathlib.Path(filename).read_text(encoding="utf-8")
-        chunked = re.split("\n\n", text)[1:]
-        for chunk in chunked:
-            try:
-                start, end = re.findall(
-                    "(\d+:\d+:\d+\.\d+) --> (\d+:\d+:\d+\.\d+).*\n", chunk
-                )[0]
-            except IndexError:
-                break  # reached end of subs
-            line = " ".join(chunk.split("\n")[1:])
-            subtitles.append(
-                SubtitleRange(
-                    text=line,
-                    time_start=start,
-                    time_end=end,
-                )
-            )
-        return subtitles

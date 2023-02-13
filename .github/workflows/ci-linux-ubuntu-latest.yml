@@ -32,7 +32,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pip install black pytest ruff
+        pip install black coverage pytest ruff
 
     - name: Run Lint tasks
       run: |
