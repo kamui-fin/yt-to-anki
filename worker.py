@@ -1,15 +1,15 @@
-import time
 import datetime
-from typing import Optional, List
-
 import os
-from aqt import mw
-from PyQt5 import QtCore, QtWidgets
-from aqt.utils import showInfo
+import time
 from subprocess import check_output
+from typing import List, Optional
 
-from client_youtube import YouTubeDownloadResult, YouTubeClient, SubtitleRange
-from models import GenerateVideoTask, FieldsConfiguration
+from aqt import mw
+from aqt.utils import showInfo
+from PyQt5 import QtCore, QtWidgets
+
+from client_youtube import SubtitleRange, YouTubeClient, YouTubeDownloadResult
+from models import FieldsConfiguration, GenerateVideoTask
 
 
 def get_ffmpeg():
