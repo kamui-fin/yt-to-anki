@@ -1,0 +1,43 @@
+name: "yt2srs on Linux"
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "**" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Upgrade pip
+      run: |
+        python -m pip install --upgrade pip
+
+    - name: Install Invoke
+      run: |
+        pip install invoke
+
+    - name: Install dependencies
+      run: |
+        pip install black pytest ruff
+
+    - name: Run Lint tasks
+      run: |
+        invoke lint
+
+    - name: Run tests
+      run: |
+        invoke test
