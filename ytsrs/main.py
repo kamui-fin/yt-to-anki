@@ -62,10 +62,10 @@ class MW(Window):
             self.error("Please enter a language")
             return
 
+        collection: Collection = self.col
         fallback: bool = bool(self.fallback_check.isChecked())
         dimensions: str = f"{self.width_box.value()}x{self.height_box.value()}"
         limit: int = self.limit_box.value()
-        collection: Collection = self.col
 
         output_dir: str = str(self.output_box.text())
         if not os.path.isdir(output_dir):

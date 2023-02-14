@@ -5,8 +5,10 @@ from subprocess import check_output
 from typing import List, Optional
 
 from aqt import mw
-from aqt.utils import showInfo
+from aqt.utils import showCritical, showInfo
 from PyQt5 import QtCore, QtWidgets
+
+from .errors import NoSubtitlesException
 
 from .client_youtube import SubtitleRange, YouTubeClient, YouTubeDownloadResult
 from .models import FieldsConfiguration, GenerateVideoTask
@@ -33,7 +35,13 @@ class DlBar(QtWidgets.QDialog):
         self.freqthread = DlThread(task=task)
         self.freqthread.start()
         self.freqthread.done.connect(lambda: self.finish_up(task=task))
+        self.freqthread.is_error.connect(lambda: self.show_error())
         self.show()
+
+    def show_error(self):
+        self.close()
+        msg = self.freqthread.error_message
+        showCritical(msg)
 
     def finish_up(self, *, task):
         self.close()
@@ -44,16 +52,23 @@ class DlBar(QtWidgets.QDialog):
 
 class DlThread(QtCore.QThread):
     done = QtCore.pyqtSignal(bool)
+    is_error = QtCore.pyqtSignal(bool)
 
     def __init__(self, *, task: GenerateVideoTask):
         super().__init__()
         self.task: GenerateVideoTask = task
         self.sources: Optional[YouTubeDownloadResult] = None
+        self.error_message: str = ""
 
     def run(self):
-        result: YouTubeDownloadResult = YouTubeClient.download_video_files(self.task)
-        self.sources = result
-        self.done.emit(True)
+        try:
+            result: YouTubeDownloadResult = YouTubeClient.download_video_files(self.task)
+            self.sources = result
+            self.done.emit(True)
+        except NoSubtitlesException:
+            self.is_error.emit(True)
+            self.error_message = "Man-made subtitles could not be found. Consider enabling fallback."
+
 
 
 class GenBar(QtWidgets.QDialog):

@@ -1,4 +1,5 @@
 import os
+import sys
 import shutil
 from glob import glob
 from typing import List
@@ -7,7 +8,9 @@ import youtube_dl
 
 from .models import GenerateVideoTask
 from .subtitles_extractor import SubtitleRange, YouTubeSubtitlesExtractor
+from .errors import NoSubtitlesException
 
+sys.stderr.isatty = lambda: False
 
 class YouTubeDownloadResult:
     def __init__(
@@ -81,8 +84,8 @@ class YouTubeClient:
         ydl = youtube_dl.YoutubeDL(ydl_opts)
         ydl.download([video_task.youtube_video_url])
 
-        if video_task.fallback:
-            if not glob(video_task.path_to_downloaded_subtitles + "/*"):
+        if not glob(video_task.path_to_downloaded_subtitles + "/*"):
+            if video_task.fallback:
                 opts_no_lang = {**ydl_opts, "writeautomaticsub": True}
                 print(
                     f"yt2srs: YouTubeClient: "
@@ -92,6 +95,8 @@ class YouTubeClient:
                 )
                 ydl = youtube_dl.YoutubeDL(opts_no_lang)
                 ydl.download([video_task.youtube_video_url])
+            else:
+                raise NoSubtitlesException
 
     @staticmethod
     def _download_video(video_task: GenerateVideoTask):

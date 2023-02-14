@@ -92,7 +92,7 @@ def bundle_libs(context):
     venv_location = (
         Path(run_invoke_cmd(context, "poetry env info -p").stdout.strip())
         / "lib"
-        / "python3.10"
+        / "python3.10"  # TODO: dynamically find this directory
         / "site-packages"
     )
     print("Bundling the following packages:")
@@ -126,13 +126,16 @@ def bundle_ffmpeg(context):
 
 # before running: link to addons21 with `ln -s ./dist ~/.local/share/Anki2/addons21/yt2srs`
 @task()
-def package(context):
+def package_dev(context):
     copy_source(context)
     bundle_libs(context)
     bundle_ffmpeg(context)
 
+    # TODO: package into .ankiaddon
+    #       filter out __pycache__
+
 
 @task()
 def dev(context):
-    package(context)
+    package_dev(context)
     anki(context)
