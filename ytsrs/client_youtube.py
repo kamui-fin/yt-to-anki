@@ -12,6 +12,7 @@ from .errors import NoSubtitlesException
 
 sys.stderr.isatty = lambda: False
 
+
 class YouTubeDownloadResult:
     def __init__(
         self,

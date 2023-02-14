@@ -117,7 +117,7 @@ class MW(Window):
 def launch():
     screen = MW()
     screen.setup_ui()
-    if not has_ffmpeg(command = "invalid"):
+    if not has_ffmpeg(command="invalid"):
         showCritical("Linux or Mac users must install ffmpeg to PATH.")
     else:
         screen.show()

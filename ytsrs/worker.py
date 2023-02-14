@@ -56,13 +56,16 @@ class DlThread(QtCore.QThread):
 
     def run(self):
         try:
-            result: YouTubeDownloadResult = YouTubeClient.download_video_files(self.task)
+            result: YouTubeDownloadResult = YouTubeClient.download_video_files(
+                self.task
+            )
             self.sources = result
             self.done.emit(True)
         except NoSubtitlesException:
             self.is_error.emit(True)
-            self.error_message = "Man-made subtitles could not be found. Consider enabling fallback."
-
+            self.error_message = (
+                "Man-made subtitles could not be found. Consider enabling fallback."
+            )
 
 
 class GenBar(QtWidgets.QDialog):
