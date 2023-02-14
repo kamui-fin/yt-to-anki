@@ -9,15 +9,9 @@ from aqt.utils import showCritical, showInfo
 from PyQt5 import QtCore, QtWidgets
 
 from .errors import NoSubtitlesException
-
 from .client_youtube import SubtitleRange, YouTubeClient, YouTubeDownloadResult
 from .models import FieldsConfiguration, GenerateVideoTask
-
-
-def get_ffmpeg():
-    home = os.path.dirname(os.path.abspath(__file__))
-    op_s = os.name
-    return os.path.join(home, "ffmpeg/ffmpeg.exe") if op_s == "nt" else "ffmpeg"
+from .utils import get_ffmpeg
 
 
 class DlBar(QtWidgets.QDialog):

@@ -3,11 +3,13 @@ import os
 from anki.collection import Collection
 from aqt import mw
 from PyQt5 import QtWidgets
+from aqt.utils import showCritical
 
 from . import worker
 from .constants import LANGUAGES, lang_list
 from .models import FieldsConfiguration, GenerateVideoTask
 from .ui import Window
+from .utils import has_ffmpeg
 
 
 class MW(Window):
@@ -115,4 +117,7 @@ class MW(Window):
 def launch():
     screen = MW()
     screen.setup_ui()
-    screen.show()
+    if not has_ffmpeg(command = "invalid"):
+        showCritical("Linux or Mac users must install ffmpeg to PATH.")
+    else:
+        screen.show()
