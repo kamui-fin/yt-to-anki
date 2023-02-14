@@ -24,6 +24,7 @@ def run_invoke_cmd(context, cmd) -> invoke.runners.Result:
 def anki(context):
     run_invoke_cmd(context, "anki")
 
+
 @task
 def test_unit(context):
     run_invoke_cmd(

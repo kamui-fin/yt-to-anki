@@ -113,6 +113,11 @@ class Window(QtWidgets.QWidget):
         self.label_19 = QtWidgets.QLabel(self.groupBox_4)
         self.label_19.setGeometry(QtCore.QRect(10, 60, 57, 21))
         self.label_19.setObjectName("label_19")
+
+        self.optimize_subtitles_check = QtWidgets.QCheckBox(self.groupBox_4)
+        self.optimize_subtitles_check.setGeometry(QtCore.QRect(10, 100, 163, 17))
+        self.optimize_subtitles_check.setObjectName("optimize_subtitles_check")
+
         self.subs_lang_box = QtWidgets.QComboBox(self.groupBox_4)
         self.subs_lang_box.setGeometry(QtCore.QRect(70, 60, 91, 22))
         self.subs_lang_box.setObjectName("subs_lang_box")
@@ -153,6 +158,7 @@ class Window(QtWidgets.QWidget):
         self.label_18.setText(_translate("self", "Height"))
         self.groupBox_4.setTitle(_translate("self", "Subtitle Settings"))
         self.fallback_check.setText(_translate("self", " Fallback to auto captions"))
+        self.optimize_subtitles_check.setText(_translate("self", " Optimize subtitles"))
         self.label_19.setText(_translate("self", "Language"))
         self.label_20.setText(_translate("self", "Limit (optional)"))
         self.label_21.setText(_translate("self", "0 = Off"))

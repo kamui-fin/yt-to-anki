@@ -35,14 +35,20 @@ class YouTubeDownloadResult:
 
 class YouTubeClient:
     @staticmethod
-    def download_video_files(video_task: GenerateVideoTask, on_progress) -> YouTubeDownloadResult:
+    def download_video_files(
+        video_task: GenerateVideoTask, on_progress
+    ) -> YouTubeDownloadResult:
         print(
             f"yt2srs: YouTubeClient: downloading video: "
             f"{video_task.youtube_video_url}"
         )
 
-        YouTubeClient._download_subtitles(video_task=video_task, on_progress=on_progress)
-        video_info = YouTubeClient._download_video(video_task=video_task, on_progress=on_progress)
+        YouTubeClient._download_subtitles(
+            video_task=video_task, on_progress=on_progress
+        )
+        video_info = YouTubeClient._download_video(
+            video_task=video_task, on_progress=on_progress
+        )
         title = video_info["title"]
 
         print(f"yt2srs: YouTubeClient: downloaded video: {title}")
@@ -50,9 +56,11 @@ class YouTubeClient:
         path_to_video = glob(video_task.path_to_downloaded_videos + "/*")[0]
         path_to_subtitles_file = glob(video_task.path_to_downloaded_subtitles + "/*")[0]
 
-        subs: List[SubtitleRange] = YouTubeSubtitlesExtractor._parse_subs(
+        subs: List[SubtitleRange] = YouTubeSubtitlesExtractor.parse_subtitles(
             path_to_subtitles_file
         )
+        if video_task.optimize_by_punctuation:
+            subs = YouTubeSubtitlesExtractor.optimize_subtitles(subs)
 
         result = YouTubeDownloadResult(
             video_title=title,
@@ -76,7 +84,7 @@ class YouTubeClient:
             "outtmpl": subtitle_output_file_template,
             "quiet": True,
             "no_warnings": True,
-            'progress_hooks': [on_progress]
+            "progress_hooks": [on_progress],
         }
         print(
             f"yt2srs: YouTubeClient: "
@@ -125,7 +133,7 @@ class YouTubeClient:
             "no_warnings": True,
             "outtmpl": video_output_file_template,
             "quiet": True,
-            'progress_hooks': [on_progress]
+            "progress_hooks": [on_progress],
         }
         print(
             f"yt2srs: YouTubeClient: "
