@@ -18,7 +18,6 @@ ruff = "^0.0.246"
 mypy = "^1.0.0"
 aqt = {extras = ["qt5"], version = "^2.1.57"}
 coverage = "^7.1.0"
-pytest-mock = "^3.10.0"
 
 [build-system]
 requires = ["poetry-core"]

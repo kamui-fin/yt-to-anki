@@ -1,5 +1,4 @@
 # flake8: noqa: E402
-
 import sys
 from os.path import dirname, join
 
