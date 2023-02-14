@@ -4,7 +4,7 @@ import shutil
 from glob import glob
 from typing import List
 
-import youtube_dl
+import yt_dlp as youtube_dl
 
 from .models import GenerateVideoTask
 from .subtitles_extractor import SubtitleRange, YouTubeSubtitlesExtractor
@@ -35,14 +35,14 @@ class YouTubeDownloadResult:
 
 class YouTubeClient:
     @staticmethod
-    def download_video_files(video_task: GenerateVideoTask) -> YouTubeDownloadResult:
+    def download_video_files(video_task: GenerateVideoTask, on_progress) -> YouTubeDownloadResult:
         print(
             f"yt2srs: YouTubeClient: downloading video: "
             f"{video_task.youtube_video_url}"
         )
 
-        YouTubeClient._download_subtitles(video_task=video_task)
-        video_info = YouTubeClient._download_video(video_task=video_task)
+        YouTubeClient._download_subtitles(video_task=video_task, on_progress=on_progress)
+        video_info = YouTubeClient._download_video(video_task=video_task, on_progress=on_progress)
         title = video_info["title"]
 
         print(f"yt2srs: YouTubeClient: downloaded video: {title}")
@@ -63,7 +63,7 @@ class YouTubeClient:
         return result
 
     @staticmethod
-    def _download_subtitles(video_task: GenerateVideoTask):
+    def _download_subtitles(video_task: GenerateVideoTask, on_progress):
         if os.path.exists(video_task.path_to_downloaded_subtitles):
             shutil.rmtree(video_task.path_to_downloaded_subtitles)
         subtitle_output_file_template = os.path.join(
@@ -76,6 +76,7 @@ class YouTubeClient:
             "outtmpl": subtitle_output_file_template,
             "quiet": True,
             "no_warnings": True,
+            'progress_hooks': [on_progress]
         }
         print(
             f"yt2srs: YouTubeClient: "
@@ -100,7 +101,7 @@ class YouTubeClient:
                 raise NoSubtitlesException
 
     @staticmethod
-    def _download_video(video_task: GenerateVideoTask):
+    def _download_video(video_task: GenerateVideoTask, on_progress):
         if os.path.exists(video_task.path_to_downloaded_videos):
             shutil.rmtree(video_task.path_to_downloaded_videos)
         video_output_file_template = os.path.join(
@@ -124,6 +125,7 @@ class YouTubeClient:
             "no_warnings": True,
             "outtmpl": video_output_file_template,
             "quiet": True,
+            'progress_hooks': [on_progress]
         }
         print(
             f"yt2srs: YouTubeClient: "

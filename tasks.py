@@ -22,10 +22,7 @@ def run_invoke_cmd(context, cmd) -> invoke.runners.Result:
 
 @task()
 def anki(context):
-    import aqt
-
-    aqt.run()
-
+    run_invoke_cmd(context, "anki")
 
 @task
 def test_unit(context):

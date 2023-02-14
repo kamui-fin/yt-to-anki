@@ -1,5 +1,6 @@
 import datetime
 import os
+import re
 import time
 from subprocess import check_output
 from typing import List, Optional
@@ -19,18 +20,29 @@ class DlBar(QtWidgets.QDialog):
         super().__init__()
 
     def setup_ui(self, *, task: GenerateVideoTask):
-        self.resize(345, 70)
+        self.resize(350, 77)
+        self.label = QtWidgets.QLabel(self)
+        self.label.setGeometry(QtCore.QRect(140, 20, 75, 13))
         self.progressBar = QtWidgets.QProgressBar(self)
-        self.progressBar.setGeometry(QtCore.QRect(10, 20, 321, 23))
-        self.progressBar.setWindowTitle("Downloading...")
-        self.progressBar.setMinimum(0)
-        self.progressBar.setMaximum(0)
+        self.progressBar.setGeometry(QtCore.QRect(10, 40, 330, 23))
 
-        self.freqthread = DlThread(task=task)
+        self.setWindowTitle("Downloading...")
+        self.label.setText("Downloading video and subtitles...")
+        self.progressBar.setValue(0)
+
+        self.freqthread = DlThread(task=task, on_progress=self.on_youtube_progress)
         self.freqthread.start()
         self.freqthread.done.connect(lambda: self.finish_up(task=task))
         self.freqthread.is_error.connect(lambda: self.show_error())
         self.show()
+
+    def on_youtube_progress(self, d):
+        if d['status'] == 'downloading':
+            ascii_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+            p = ascii_escape.sub('', d['_percent_str']).strip().replace('%', '')
+            self.progressBar.setValue(int(float(p)))
+        elif d['status'] == 'finished':
+            self.progressBar.setValue(100)
 
     def show_error(self):
         self.close()
@@ -48,16 +60,18 @@ class DlThread(QtCore.QThread):
     done = QtCore.pyqtSignal(bool)
     is_error = QtCore.pyqtSignal(bool)
 
-    def __init__(self, *, task: GenerateVideoTask):
+    def __init__(self, *, task: GenerateVideoTask, on_progress):
         super().__init__()
         self.task: GenerateVideoTask = task
         self.sources: Optional[YouTubeDownloadResult] = None
         self.error_message: str = ""
+        self.on_progress = on_progress
 
     def run(self):
         try:
             result: YouTubeDownloadResult = YouTubeClient.download_video_files(
-                self.task
+                self.task,
+                self.on_progress
             )
             self.sources = result
             self.done.emit(True)
@@ -81,7 +95,7 @@ class GenBar(QtWidgets.QDialog):
         self.progressBar = QtWidgets.QProgressBar(self)
         self.progressBar.setGeometry(QtCore.QRect(10, 40, 330, 23))
         self.setWindowTitle("Adding cards")
-        self.label.setText("Generating")
+        self.label.setText("Generating cards")
         self.threadClass = GenThread(
             task=task,
             youtube_download_result=youtube_download_result,
