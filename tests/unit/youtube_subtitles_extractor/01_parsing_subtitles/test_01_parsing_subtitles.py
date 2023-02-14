@@ -4,9 +4,7 @@ from typing import List
 from ytsrs.subtitles_extractor import SubtitleRange, YouTubeSubtitlesExtractor
 
 path_to_this_test_folder = os.path.abspath(os.path.dirname(__file__))
-path_to_the_subtitles_file = os.path.join(
-    path_to_this_test_folder, "subtitles.en.vtt"
-)
+path_to_the_subtitles_file = os.path.join(path_to_this_test_folder, "subtitles.en.vtt")
 
 
 def test_01_parsing_subtitles():

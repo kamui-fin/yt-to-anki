@@ -2,8 +2,8 @@
 import sys
 from os.path import dirname, join
 
-if 'pytest' not in sys.modules:
-    sys.path.append(join(dirname(__file__), 'lib'))
+if "pytest" not in sys.modules:
+    sys.path.append(join(dirname(__file__), "lib"))
 
     from aqt import mw
     from aqt.qt import *

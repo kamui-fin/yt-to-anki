@@ -43,7 +43,7 @@ def test_unit(context):
 @task
 def lint_black_diff(context):
     command = """
-        poetry run black *.py --color 2>&1
+        poetry run black *.py ytsrs/ tests/unit/ --color 2>&1
     """
     result = run_invoke_cmd(context, command)
 
@@ -58,7 +58,7 @@ def lint_black_diff(context):
 def lint_ruff(context, fix=False):
     argument_fix = "--fix" if fix else ""
     command = f"""
-        poetry run ruff *.py {argument_fix}
+        poetry run ruff *.py ytsrs/ tests/unit/ {argument_fix}
     """
     run_invoke_cmd(context, command)
 
