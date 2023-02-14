@@ -2,9 +2,9 @@ name: "yt2srs on Linux"
 
 on:
   push:
-    branches: [ "master" ]
+    branches: ["master"]
   pull_request:
-    branches: [ "**" ]
+    branches: ["**"]
 
 jobs:
   build:
@@ -15,29 +15,28 @@ jobs:
         python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
 
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
-      with:
-        python-version: ${{ matrix.python-version }}
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
 
-    - name: Upgrade pip
-      run: |
-        python -m pip install --upgrade pip
+      - name: Upgrade pip
+        run: |
+          python -m pip install --upgrade pip
 
-    - name: Install Invoke
-      run: |
-        pip install invoke
+      - name: Install poetry
+        uses: snok/install-poetry@v1
 
-    - name: Install dependencies
-      run: |
-        pip install black coverage pytest ruff
+      - name: Install all dependencies
+        run: |
+          poetry install --no-interaction
 
-    - name: Run Lint tasks
-      run: |
-        invoke lint
+      - name: Run lint tasks
+        run: |
+          poetry run invoke lint
 
-    - name: Run tests
-      run: |
-        invoke test
+      - name: Run tests
+        run: |
+          poetry run invoke test

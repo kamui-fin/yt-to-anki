@@ -24,11 +24,10 @@ def test_unit(context):
     run_invoke_cmd(
         context,
         """
-        coverage run
+        poetry run coverage run
             --rcfile=.coveragerc
             --branch
-            -m pytest
-            tests/unit/
+            -m pytest tests/unit/
         """,
     )
 
@@ -36,7 +35,7 @@ def test_unit(context):
 @task
 def lint_black_diff(context):
     command = """
-        black *.py --color 2>&1
+        poetry run black *.py --color 2>&1
     """
     result = run_invoke_cmd(context, command)
 
@@ -51,7 +50,7 @@ def lint_black_diff(context):
 def lint_ruff(context, fix=False):
     argument_fix = "--fix" if fix else ""
     command = f"""
-        ruff *.py {argument_fix}
+        poetry run ruff *.py {argument_fix}
     """
     run_invoke_cmd(context, command)
 

@@ -5,8 +5,8 @@ from typing import List
 
 import youtube_dl
 
-from models import GenerateVideoTask
-from subtitles_extractor import SubtitleRange, YouTubeSubtitlesExtractor
+from .models import GenerateVideoTask
+from .subtitles_extractor import SubtitleRange, YouTubeSubtitlesExtractor
 
 
 class YouTubeDownloadResult:

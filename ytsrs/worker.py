@@ -8,8 +8,8 @@ from aqt import mw
 from aqt.utils import showInfo
 from PyQt5 import QtCore, QtWidgets
 
-from client_youtube import SubtitleRange, YouTubeClient, YouTubeDownloadResult
-from models import FieldsConfiguration, GenerateVideoTask
+from .client_youtube import SubtitleRange, YouTubeClient, YouTubeDownloadResult
+from .models import FieldsConfiguration, GenerateVideoTask
 
 
 def get_ffmpeg():

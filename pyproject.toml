@@ -9,15 +9,16 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10"
 youtube-dl = "^2021.12.17"
-mypy = "^1.0.0"
-aqt = {extras = ["qt6"], version = "^2.1.57"}
-
 
 [tool.poetry.group.dev.dependencies]
 invoke = "^2.0.0"
 black = "^23.1.0"
 pytest = "^7.2.1"
 ruff = "^0.0.246"
+mypy = "^1.0.0"
+aqt = {extras = ["qt5"], version = "^2.1.57"}
+coverage = "^7.1.0"
+pytest-mock = "^3.10.0"
 
 [build-system]
 requires = ["poetry-core"]
