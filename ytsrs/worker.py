@@ -37,11 +37,11 @@ class DlBar(QtWidgets.QDialog):
         self.show()
 
     def on_youtube_progress(self, d):
-        if d['status'] == 'downloading':
-            ascii_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
-            p = ascii_escape.sub('', d['_percent_str']).strip().replace('%', '')
+        if d["status"] == "downloading":
+            ascii_escape = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
+            p = ascii_escape.sub("", d["_percent_str"]).strip().replace("%", "")
             self.progressBar.setValue(int(float(p)))
-        elif d['status'] == 'finished':
+        elif d["status"] == "finished":
             self.progressBar.setValue(100)
 
     def show_error(self):
@@ -70,8 +70,7 @@ class DlThread(QtCore.QThread):
     def run(self):
         try:
             result: YouTubeDownloadResult = YouTubeClient.download_video_files(
-                self.task,
-                self.on_progress
+                self.task, self.on_progress
             )
             self.sources = result
             self.done.emit(True)

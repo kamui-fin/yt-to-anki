@@ -66,6 +66,7 @@ class MW(Window):
 
         collection: Collection = self.col
         fallback: bool = bool(self.fallback_check.isChecked())
+        optimize_by_punctuation: bool = bool(self.optimize_subtitles_check.isChecked())
         dimensions: str = f"{self.width_box.value()}x{self.height_box.value()}"
         limit: int = self.limit_box.value()
 
@@ -97,6 +98,7 @@ class MW(Window):
             youtube_video_url=youtube_video_url,
             language=language,
             fallback=fallback,
+            optimize_by_punctuation=optimize_by_punctuation,
             dimensions=dimensions,
             limit=limit,
             collection=collection,

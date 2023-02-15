@@ -13,6 +13,7 @@ def test_safe_handle_no_fallback_no_subtitles():
             youtube_video_url="https://www.youtube.com/watch?v=7CWBdYbfmqw",
             language="en",
             fallback=False,
+            optimize_by_punctuation=False,
             # mocked
             dimensions="",
             limit=0,
@@ -20,4 +21,4 @@ def test_safe_handle_no_fallback_no_subtitles():
             output_dir="",
             fields=MagicMock(spec=FieldsConfiguration),
         )
-        YouTubeClient.download_video_files(task)
+        YouTubeClient.download_video_files(task, on_progress=None)

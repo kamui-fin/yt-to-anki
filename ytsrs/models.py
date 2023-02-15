@@ -23,6 +23,7 @@ class GenerateVideoTask:
         youtube_video_url: str,
         language: str,
         fallback: bool,
+        optimize_by_punctuation: bool,
         dimensions: str,
         limit: int,
         collection: Collection,
@@ -32,6 +33,7 @@ class GenerateVideoTask:
         assert isinstance(youtube_video_url, str)
         assert isinstance(language, str)
         assert isinstance(fallback, bool)
+        assert isinstance(optimize_by_punctuation, bool)
         assert isinstance(dimensions, str)
         assert isinstance(limit, int)
         assert isinstance(collection, Collection)
@@ -40,6 +42,7 @@ class GenerateVideoTask:
         self.youtube_video_url: str = youtube_video_url
         self.language: str = language
         self.fallback: bool = fallback
+        self.optimize_by_punctuation: bool = optimize_by_punctuation
         self.dimensions: str = dimensions
         self.limit: int = limit
         self.collection: Collection = collection
