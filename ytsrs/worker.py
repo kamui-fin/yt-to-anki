@@ -171,7 +171,10 @@ class GenThread(QtCore.QThread):
         limit = self.task.limit
 
         ffmpeg = get_ffmpeg()
-        subtitles: List[SubtitleRange] = self.youtube_download_result.subtitles[:limit]
+        subtitles: List[SubtitleRange] = self.youtube_download_result.subtitles
+        if limit > 0:
+            subtitles = subtitles[:limit]
+
         count = 0
         total_subs = len(subtitles)
         timer_start = time.perf_counter()
