@@ -9,6 +9,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10"
 yt-dlp = "^2023.1.6"
+webvtt-py = "^0.4.6"
 
 [tool.poetry.group.dev.dependencies]
 invoke = "^2.0.0"

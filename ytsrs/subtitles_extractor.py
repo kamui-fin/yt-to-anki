@@ -1,7 +1,6 @@
 import os
-import pathlib
-import re
 from typing import List, Optional
+import webvtt
 
 
 class SubtitleRange:
@@ -24,24 +23,14 @@ class SubtitleRange:
 class YouTubeSubtitlesExtractor:
     @staticmethod
     def parse_subtitles(filename) -> List[SubtitleRange]:
-        subtitles: List[SubtitleRange] = []
-        text = pathlib.Path(filename).read_text(encoding="utf-8")
-        chunked = re.split("\n\n", text)[1:]
-        for chunk in chunked:
-            try:
-                start, end = re.findall(
-                    "(\\d+:\\d+:\\d+\\.\\d+) --> (\\d+:\\d+:\\d+\\.\\d+).*\n", chunk
-                )[0]
-            except IndexError:
-                break  # reached end of subs
-            line = " ".join(chunk.split("\n")[1:])
-            subtitles.append(
-                SubtitleRange(
-                    text=line,
-                    time_start=start,
-                    time_end=end,
-                )
+        subtitles: List[SubtitleRange] = [
+            SubtitleRange(
+                text=caption.text.replace("\n", " "),
+                time_start=caption.start,
+                time_end=caption.end,
             )
+            for caption in webvtt.read(filename)
+        ]
         return subtitles
 
     @staticmethod

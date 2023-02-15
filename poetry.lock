@@ -580,6 +580,17 @@ files = [
 ]
 
 [[package]]
+name = "docopt"
+version = "0.6.2"
+description = "Pythonic argument parser, that will make you smile"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "docopt-0.6.2.tar.gz", hash = "sha256:49b3a825280bd66b3aa83585ef59c4a8c82f2c8a522dbe754a8bc8d08c85c491"},
+]
+
+[[package]]
 name = "exceptiongroup"
 version = "1.1.0"
 description = "Backport of PEP 654 (exception groups)"
@@ -1503,6 +1514,20 @@ files = [
 ]
 
 [[package]]
+name = "webvtt-py"
+version = "0.4.6"
+description = "WebVTT reader, writer and segmenter"
+category = "main"
+optional = false
+python-versions = ">=3.4"
+files = [
+    {file = "webvtt_py-0.4.6-py3-none-any.whl", hash = "sha256:5cf9da2a8c34bc789db599377be87b228b7e4734c629597edd27a8054e004a57"},
+]
+
+[package.dependencies]
+docopt = "*"
+
+[[package]]
 name = "werkzeug"
 version = "2.2.2"
 description = "The comprehensive WSGI web application library."
@@ -1559,4 +1584,4 @@ websockets = "*"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "2b64a5da0b9ce9085e1aa5b9b373651924e921595eb1f40cb5988a4ad7b4c1be"
+content-hash = "a4c123d462d4739f39460c0f9abc21060dca725ae438f3f78bed6b11bad438aa"

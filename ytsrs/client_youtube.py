@@ -82,6 +82,7 @@ class YouTubeClient:
             "skip_download": True,
             "writesubtitles": True,
             "outtmpl": subtitle_output_file_template,
+            "subtitlesformat": "vtt",
             "quiet": True,
             "no_warnings": True,
             "progress_hooks": [on_progress],
