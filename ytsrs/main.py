@@ -10,7 +10,7 @@ from . import worker
 from .constants import LANGUAGES, lang_list
 from .models import FieldsConfiguration, GenerateVideoTask
 from .ui import Window
-from .utils import has_ffmpeg
+from .utils import has_ffmpeg, bool_to_string, string_to_bool
 
 
 class MW(Window):
@@ -37,6 +37,14 @@ class MW(Window):
         self.width_box.setValue(int(self.settings.value("width", 240)))
         self.height_box.setValue(int(self.settings.value("height", 160)))
         self.limit_box.setValue(int(self.settings.value("limit", 0)))
+
+        self.fallback_check.setChecked(
+            string_to_bool(self.settings.value("fallback", False))
+        )
+        self.optimize_subtitles_check.setChecked(
+            string_to_bool(self.settings.value("optimize_subtitles", False))
+        )
+
         self.settings.endGroup()
 
     def write_settings(self):
@@ -52,6 +60,14 @@ class MW(Window):
         self.settings.setValue("width", self.width_box.value())
         self.settings.setValue("height", self.height_box.value())
         self.settings.setValue("limit", self.limit_box.value())
+
+        self.settings.setValue(
+            "fallback", bool_to_string(self.fallback_check.isChecked())
+        )
+        self.settings.setValue(
+            "optimize_subtitles",
+            bool_to_string(self.optimize_subtitles_check.isChecked()),
+        )
 
         self.settings.endGroup()
         self.settings.sync()
