@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "yt2srs"
+name = "yt-to-anki"
 version = "0.1.0"
 description = "Simple anki addon to generate decks from youtube videos"
 authors = ["Kamui <fin-kamui@pm.me>"]

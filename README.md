@@ -1,10 +1,10 @@
-# Youtube Subs2SRS
+# Youtube to Anki
 
 An anki addon that generates a full-fledged deck with audio and pictures from a youtube link using subtitles with the click of a button.
 This eliminates the need for having to download a video, or the accompanying subtitles, retiming them, and dealing with TSV files to import.
 For those of you familiar with Subs2SRS, consider this to be the Youtube version.
 
-`yt2srs` offers several features:
+This addon offers several features:
 
 - Supports all languages
 - Fallback to automatically generated subs if man-made captions could not be found
@@ -34,8 +34,8 @@ Before moving on, be sure you have `python` and `poetry` setup.
 1. Clone the repository
 
 ```
-git clone https://github.com/kamui-fin/yt2srs.git
-cd yt2srs
+git clone https://github.com/kamui-fin/yt-to-anki.git
+cd yt-to-anki
 ```
 
 2. Install dependencies
@@ -44,29 +44,29 @@ cd yt2srs
 poetry install
 ```
 
-3. If you are on windows, you need to create a top-level directory called `ffmpeg` with [`ffmpeg.exe`](https://github.com/BtbN/FFmpeg-Builds/releases) inside
-4. Bundle everything (or update the bundle)
+3. Install pre-commit hooks
+
+```
+poetry run pre-commit install
+```
+
+4. If you are on windows, you need to create a top-level directory called `ffmpeg` with [`ffmpeg.exe`](https://github.com/BtbN/FFmpeg-Builds/releases) inside
+5. Bundle everything (or update the bundle)
 
 ```
 poetry run invoke package-dev
 ```
 
-5. Create a symlink of `dist/` inside of your Anki data's `addons21/` folder
+6. Create a symlink of `dist/` inside of your Anki data's `addons21/` folder
 
 ```
-ln -s ./dist ~/.local/share/Anki2/addons21/yt2srs
+ln -s ./dist ~/.local/share/Anki2/addons21/yt-to-anki
 ```
 
-6. Now you can use the `dev` command for simultaneously running anki with the updated bundle
+7. Now you can use the `dev` command for simultaneously running anki with the updated bundle
 
 ```
 poetry run invoke dev
-```
-
-7. For running lint and unit test tasks:
-
-```
-poetry run invoke check
 ```
 
 ## Contributing

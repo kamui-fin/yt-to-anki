@@ -36,7 +36,7 @@ def test_unit(context):
 @task
 def lint_black_diff(context):
     command = """
-        poetry run black *.py ytsrs/ tests/unit/ --color 2>&1
+        poetry run black *.py ytanki/ tests/unit/ --color 2>&1
     """
     result = run_invoke_cmd(context, command)
 
@@ -51,7 +51,7 @@ def lint_black_diff(context):
 def lint_ruff(context, fix=False):
     argument_fix = "--fix" if fix else ""
     command = f"""
-        poetry run ruff *.py ytsrs/ tests/unit/ {argument_fix}
+        poetry run ruff *.py ytanki/ tests/unit/ {argument_fix}
     """
     run_invoke_cmd(context, command)
 
@@ -110,7 +110,7 @@ def bundle_libs(context):
 
 @task()
 def copy_source(context):
-    copytree("ytsrs", "dist", dirs_exist_ok=True)
+    copytree("ytanki", "dist", dirs_exist_ok=True)
 
 
 @task()
@@ -126,7 +126,6 @@ def anki(context):
     run_invoke_cmd(context, "anki")
 
 
-# before running: link to addons21 with `ln -s ./dist ~/.local/share/Anki2/addons21/yt2srs`
 @task()
 def package_dev(context):
     copy_source(context)
