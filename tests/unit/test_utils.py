@@ -1,4 +1,4 @@
-from ytsrs.utils import has_ffmpeg
+from ytanki.utils import has_ffmpeg
 
 
 def test_ffmpeg_does_not_exist():

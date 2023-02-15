@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "yt2srs"
+name = "yt-to-anki"
 version = "0.1.0"
 description = "Simple anki addon to generate decks from youtube videos"
 authors = ["Kamui <fin-kamui@pm.me>"]
@@ -19,6 +19,7 @@ ruff = "^0.0.246"
 mypy = "^1.0.0"
 aqt = {extras = ["qt5"], version = "^2.1.57"}
 coverage = "^7.1.0"
+pre-commit = "^3.0.4"
 
 [build-system]
 requires = ["poetry-core"]

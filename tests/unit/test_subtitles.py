@@ -1,7 +1,7 @@
 from anki.collection import Collection
-from ytsrs.client_youtube import YouTubeClient
-from ytsrs.models import FieldsConfiguration, GenerateVideoTask
-from ytsrs.errors import NoSubtitlesException
+from ytanki.client_youtube import YouTubeClient
+from ytanki.models import FieldsConfiguration, GenerateVideoTask
+from ytanki.errors import NoSubtitlesException
 
 from unittest.mock import MagicMock
 import pytest

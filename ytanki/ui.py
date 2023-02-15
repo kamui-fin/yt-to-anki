@@ -142,7 +142,7 @@ class Window(QtWidgets.QWidget):
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        self.setWindowTitle(_translate("self", "YT Subs2Srs"))
+        self.setWindowTitle(_translate("self", "Youtube to Anki"))
         self.label.setText(_translate("self", "Video Link"))
         self.label_2.setText(_translate("self", "Output Folder"))
         self.groupBox.setTitle(_translate("self", "Export Settings"))
