@@ -27,3 +27,11 @@ def has_ffmpeg(command=LINUX_MACOS_FFMPEG_CHECK_COMMAND):
         return True
     except (FileNotFoundError, CalledProcessError):
         return False
+
+
+def bool_to_string(bool_value: bool):
+    return "true" if bool_value else "false"
+
+
+def string_to_bool(string_value: str):
+    return string_value == "true"
