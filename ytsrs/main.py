@@ -1,10 +1,10 @@
 import os
 from pathlib import Path
 
+from PyQt5 import QtCore, QtWidgets
 from anki.collection import Collection
 from aqt import mw
-from PyQt5 import QtCore, QtWidgets
-from aqt.utils import showCritical, showInfo
+from aqt.utils import showCritical
 
 from . import worker
 from .constants import LANGUAGES, lang_list
@@ -17,7 +17,7 @@ class MW(Window):
     def __init__(self):
         super().__init__()
         settings_path = Path(os.path.abspath(__file__)).parent / "main.ini"
-        showInfo(str(settings_path))
+        # showInfo(str(settings_path))
         self.settings = QtCore.QSettings(
             str(settings_path), QtCore.QSettings.Format.IniFormat
         )
@@ -34,9 +34,9 @@ class MW(Window):
         self.pic_box.setCurrentText(self.settings.value("pic_box", ""))
         self.text_box.setCurrentText(self.settings.value("text_box", ""))
 
-        self.width_box.setValue(self.settings.value("width", 240))
-        self.height_box.setValue(self.settings.value("height", 160))
-        self.limit_box.setValue(self.settings.value("limit", 0))
+        self.width_box.setValue(int(self.settings.value("width", 240)))
+        self.height_box.setValue(int(self.settings.value("height", 160)))
+        self.limit_box.setValue(int(self.settings.value("limit", 0)))
         self.settings.endGroup()
 
     def write_settings(self):
