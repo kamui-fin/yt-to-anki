@@ -1,9 +1,10 @@
 import os
+from pathlib import Path
 
 from anki.collection import Collection
 from aqt import mw
-from PyQt5 import QtWidgets
-from aqt.utils import showCritical
+from PyQt5 import QtCore, QtWidgets
+from aqt.utils import showCritical, showInfo
 
 from . import worker
 from .constants import LANGUAGES, lang_list
@@ -15,6 +16,45 @@ from .utils import has_ffmpeg
 class MW(Window):
     def __init__(self):
         super().__init__()
+        settings_path = Path(os.path.abspath(__file__)).parent / "main.ini"
+        showInfo(str(settings_path))
+        self.settings = QtCore.QSettings(
+            str(settings_path), QtCore.QSettings.Format.IniFormat
+        )
+
+    def read_settings(self):
+        self.settings.beginGroup("MainWindow")
+        self.output_box.setText(self.settings.value("output_dir", ""))
+        self.subs_lang_box.setCurrentText(
+            self.settings.value("subs_lang_box", LANGUAGES.get("en"))
+        )
+
+        self.note_box.setCurrentText(self.settings.value("note_box", ""))
+        self.audio_box.setCurrentText(self.settings.value("audio_box", ""))
+        self.pic_box.setCurrentText(self.settings.value("pic_box", ""))
+        self.text_box.setCurrentText(self.settings.value("text_box", ""))
+
+        self.width_box.setValue(self.settings.value("width", 240))
+        self.height_box.setValue(self.settings.value("height", 160))
+        self.limit_box.setValue(self.settings.value("limit", 0))
+        self.settings.endGroup()
+
+    def write_settings(self):
+        self.settings.beginGroup("MainWindow")
+        self.settings.setValue("output_dir", self.output_box.text())
+        self.settings.setValue("subs_lang_box", self.subs_lang_box.currentText())
+
+        self.settings.setValue("note_box", self.note_box.currentText())
+        self.settings.setValue("audio_box", self.audio_box.currentText())
+        self.settings.setValue("pic_box", self.pic_box.currentText())
+        self.settings.setValue("text_box", self.text_box.currentText())
+
+        self.settings.setValue("width", self.width_box.value())
+        self.settings.setValue("height", self.height_box.value())
+        self.settings.setValue("limit", self.limit_box.value())
+
+        self.settings.endGroup()
+        self.settings.sync()
 
     def setup_ui(self):
         self.col = mw.col
@@ -31,6 +71,7 @@ class MW(Window):
 
         self.choose_dir_button.clicked.connect(self.choose_dir)
         self.generate_button.clicked.connect(lambda: self.generate())
+        self.read_settings()
 
     def choose_dir(self):
         directory = str(
@@ -87,6 +128,9 @@ class MW(Window):
         if len(text_field) == 0 or len(audio_field) == 0 or len(picture_field) == 0:
             self.error("Please enter all fields")
             return
+
+        self.write_settings()
+        return
 
         fields: FieldsConfiguration = FieldsConfiguration(
             note_type=note_type,
