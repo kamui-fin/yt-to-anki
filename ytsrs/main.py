@@ -24,6 +24,7 @@ class MW(Window):
 
     def read_settings(self):
         self.settings.beginGroup("MainWindow")
+        self.link_box.setText(self.settings.value("video_url", ""))
         self.output_box.setText(self.settings.value("output_dir", ""))
         self.subs_lang_box.setCurrentText(
             self.settings.value("subs_lang_box", LANGUAGES.get("en"))
@@ -49,6 +50,7 @@ class MW(Window):
 
     def write_settings(self):
         self.settings.beginGroup("MainWindow")
+        self.settings.setValue("video_url", self.link_box.text())
         self.settings.setValue("output_dir", self.output_box.text())
         self.settings.setValue("subs_lang_box", self.subs_lang_box.currentText())
 
