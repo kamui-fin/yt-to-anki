@@ -2,7 +2,7 @@ import re
 import invoke
 from invoke import task
 from pathlib import Path
-from shutil import copytree
+from shutil import copytree, copy
 
 
 def one_line_command(string):
@@ -23,6 +23,7 @@ def run_invoke_cmd(context, cmd) -> invoke.runners.Result:
 @task()
 def anki(context):
     run_invoke_cmd(context, "anki")
+
 
 @task
 def test_unit(context):
@@ -105,7 +106,11 @@ def bundle_libs(context):
     ]
     for dep in deps:
         dep_path = venv_location.joinpath(dep)
-        copytree(dep_path, lib_location / dep)
+        with_py = dep_path.with_suffix(".py")
+        if with_py.exists():
+            copy(with_py, lib_location / with_py.name)
+        elif dep_path.exists():
+            copytree(dep_path, lib_location / dep)
 
 
 @task()
