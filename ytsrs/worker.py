@@ -5,6 +5,7 @@ import time
 from subprocess import check_output
 from typing import List, Optional
 
+from PyQt5.QtCore import Qt
 from aqt import mw
 from aqt.utils import showCritical, showInfo
 from PyQt5 import QtCore, QtWidgets
@@ -22,7 +23,8 @@ class DownloadYouTubeVideoBar(QtWidgets.QDialog):
     def setup_ui(self, *, task: GenerateVideoTask):
         self.resize(350, 77)
         self.label = QtWidgets.QLabel(self)
-        self.label.setGeometry(QtCore.QRect(140, 20, 75, 13))
+        self.label.setGeometry(QtCore.QRect(0, 20, self.width(), 13))
+        self.label.setAlignment(Qt.AlignCenter)
         self.progressBar = QtWidgets.QProgressBar(self)
         self.progressBar.setGeometry(QtCore.QRect(10, 40, 330, 23))
 
@@ -91,7 +93,8 @@ class GenerateCardsBar(QtWidgets.QDialog):
     ):
         self.resize(350, 77)
         self.label = QtWidgets.QLabel(self)
-        self.label.setGeometry(QtCore.QRect(140, 20, 75, 13))
+        self.label.setGeometry(QtCore.QRect(0, 20, self.width(), 13))
+        self.label.setAlignment(Qt.AlignCenter)
         self.progressBar = QtWidgets.QProgressBar(self)
         self.progressBar.setGeometry(QtCore.QRect(10, 40, 330, 23))
         self.setWindowTitle("Adding cards")
@@ -111,7 +114,7 @@ class GenerateCardsBar(QtWidgets.QDialog):
         self.progressBar.setValue(val)
 
     def showTime(self, duration, total_cards):
-        showInfo(f"Generated {total_cards} cards in {str(duration)} seconds")
+        showInfo(f"Generated {total_cards} cards in {str(round(duration, 1))} seconds")
 
     @QtCore.pyqtSlot(SubtitleRange, str, FieldsConfiguration)
     def add_card(
