@@ -25,13 +25,20 @@ class YouTubeSubtitlesExtractor:
     def parse_subtitles(filename) -> List[SubtitleRange]:
         subtitles: List[SubtitleRange] = [
             SubtitleRange(
-                text=caption.text.replace("\n", " "),
+                text=caption.text.replace("\n", " ").strip(),
                 time_start=caption.start,
                 time_end=caption.end,
             )
             for caption in webvtt.read(filename)
         ]
-        return subtitles
+        without_duplicates = []
+        seen_subs = set()
+        for sub in subtitles:
+            if sub.text not in seen_subs:
+                without_duplicates.append(sub)
+                seen_subs.add(sub.text)
+
+        return without_duplicates
 
     @staticmethod
     def optimize_subtitles(subtitles: List[SubtitleRange]) -> List[SubtitleRange]:

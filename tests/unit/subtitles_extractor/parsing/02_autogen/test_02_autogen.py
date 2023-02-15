@@ -13,3 +13,11 @@ def test_02_autogen_removes_structure():
     )
     assert "<c>" not in subtitles[0].text
     assert "</c>" not in subtitles[0].text
+
+
+def test_02_avoid_duplicates():
+    subtitles: List[SubtitleRange] = YouTubeSubtitlesExtractor.parse_subtitles(
+        path_to_the_subtitles_file
+    )
+    texts = [sub.text for sub in subtitles]
+    assert len(set(texts)) == len(texts)
