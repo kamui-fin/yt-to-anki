@@ -100,11 +100,11 @@ class GenerateCardsBar(QtWidgets.QDialog):
             task=task,
             youtube_download_result=youtube_download_result,
         )
-        self.threadClass.start()
         self.threadClass.updateNum.connect(self.updateProgress)
         self.threadClass.addToDeckSignal.connect(self.add_card)
         self.threadClass.finished.connect(lambda: self.close())
         self.threadClass.finishTime.connect(self.showTime)
+        self.threadClass.start()
         self.show()
 
     def updateProgress(self, val):
@@ -247,7 +247,7 @@ class GenerateCardsThread(QtCore.QThread):
             )
 
             count += 1
-            percent = (count / total_subs) * 100
+            percent = int((count / total_subs) * 100)
             self.updateNum.emit(percent)
 
             self.addToDeckSignal.emit(
