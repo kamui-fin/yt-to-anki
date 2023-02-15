@@ -17,6 +17,8 @@ For those of you familiar with Subs2SRS, consider this to be the Youtube version
 1. In `Tools > Addons`, click `Get addon` and use the code `964531817`
 2. Restart Anki for changes to take place
 
+If you are a Linux or Mac user, make sure to install `ffmpeg` using your package manager.
+
 ## Usage
 
 1. Enter the youtube link for the video
