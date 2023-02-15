@@ -109,8 +109,8 @@ class GenBar(QtWidgets.QDialog):
     def updateProgress(self, val):
         self.progressBar.setValue(val)
 
-    def showTime(self, duration):
-        showInfo(f"Generated all cards in {str(duration)} seconds")
+    def showTime(self, duration, total_cards):
+        showInfo(f"Generated {total_cards} cards in {str(duration)} seconds")
 
     @QtCore.pyqtSlot(SubtitleRange, str, FieldsConfiguration)
     def add_card(
@@ -149,7 +149,7 @@ class GenBar(QtWidgets.QDialog):
 class GenThread(QtCore.QThread):
     updateNum = QtCore.pyqtSignal(int)
     finished = QtCore.pyqtSignal(bool)
-    finishTime = QtCore.pyqtSignal(float)
+    finishTime = QtCore.pyqtSignal(float, int)
     addToDeckSignal = QtCore.pyqtSignal(SubtitleRange, str, FieldsConfiguration)
 
     def __init__(
@@ -170,12 +170,12 @@ class GenThread(QtCore.QThread):
         limit = self.task.limit
 
         ffmpeg = get_ffmpeg()
-        info: List[SubtitleRange] = self.youtube_download_result.subtitles[:limit]
+        subtitles: List[SubtitleRange] = self.youtube_download_result.subtitles[:limit]
         count = 0
-        total_subs = len(info)
+        total_subs = len(subtitles)
         timer_start = time.perf_counter()
 
-        for sub in info:
+        for sub in subtitles:
             if self.stop_flag:
                 os.remove(self.youtube_download_result.path_to_video)
                 os.remove(self.youtube_download_result.path_to_subtitles_file)
@@ -259,7 +259,7 @@ class GenThread(QtCore.QThread):
         os.remove(self.youtube_download_result.path_to_subtitles_file)
 
         self.finished.emit(True)
-        self.finishTime.emit(finishedtime)
+        self.finishTime.emit(finishedtime, total_subs)
 
 
 def create_subs2srs_deck(*, task: GenerateVideoTask):
