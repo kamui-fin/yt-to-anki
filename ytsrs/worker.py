@@ -15,7 +15,7 @@ from .models import FieldsConfiguration, GenerateVideoTask
 from .utils import get_ffmpeg
 
 
-class DlBar(QtWidgets.QDialog):
+class DownloadYouTubeVideoBar(QtWidgets.QDialog):
     def __init__(self):
         super().__init__()
 
@@ -30,7 +30,7 @@ class DlBar(QtWidgets.QDialog):
         self.label.setText("Downloading video and subtitles...")
         self.progressBar.setValue(0)
 
-        self.freqthread = DlThread(task=task)
+        self.freqthread = DownloadYouTubeVideoThread(task=task)
         self.freqthread.on_progress.connect(lambda d: self.on_youtube_progress(d))
         self.freqthread.done.connect(lambda: self.finish_up(task=task))
         self.freqthread.is_error.connect(lambda: self.show_error())
@@ -53,11 +53,11 @@ class DlBar(QtWidgets.QDialog):
     def finish_up(self, *, task):
         self.close()
         youtube_download_result: YouTubeDownloadResult = self.freqthread.sources
-        dial = GenBar()
+        dial = GenerateCardsBar()
         dial.setup_ui(task, youtube_download_result)
 
 
-class DlThread(QtCore.QThread):
+class DownloadYouTubeVideoThread(QtCore.QThread):
     done = QtCore.pyqtSignal(bool)
     is_error = QtCore.pyqtSignal(bool)
     on_progress = QtCore.pyqtSignal(dict)
@@ -82,7 +82,7 @@ class DlThread(QtCore.QThread):
             )
 
 
-class GenBar(QtWidgets.QDialog):
+class GenerateCardsBar(QtWidgets.QDialog):
     def __init__(self):
         super().__init__()
 
@@ -96,7 +96,7 @@ class GenBar(QtWidgets.QDialog):
         self.progressBar.setGeometry(QtCore.QRect(10, 40, 330, 23))
         self.setWindowTitle("Adding cards")
         self.label.setText("Generating cards")
-        self.threadClass = GenThread(
+        self.threadClass = GenerateCardsThread(
             task=task,
             youtube_download_result=youtube_download_result,
         )
@@ -144,10 +144,10 @@ class GenBar(QtWidgets.QDialog):
 
     def closeEvent(self, event):
         self.threadClass.stop()
-        super(GenBar, self).closeEvent(event)
+        super(GenerateCardsBar, self).closeEvent(event)
 
 
-class GenThread(QtCore.QThread):
+class GenerateCardsThread(QtCore.QThread):
     updateNum = QtCore.pyqtSignal(int)
     finished = QtCore.pyqtSignal(bool)
     finishTime = QtCore.pyqtSignal(float, int)
@@ -267,5 +267,5 @@ class GenThread(QtCore.QThread):
 
 
 def create_subs2srs_deck(*, task: GenerateVideoTask):
-    dl_bar = DlBar()
+    dl_bar = DownloadYouTubeVideoBar()
     dl_bar.setup_ui(task=task)
