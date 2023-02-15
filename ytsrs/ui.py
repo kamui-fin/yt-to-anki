@@ -131,7 +131,7 @@ class Window(QtWidgets.QWidget):
         self.label_21.setGeometry(QtCore.QRect(280, 380, 41, 21))
         self.label_21.setObjectName("label_21")
         self.generate_button = QtWidgets.QPushButton(self)
-        self.generate_button.setGeometry(QtCore.QRect(20, 380, 75, 23))
+        self.generate_button.setGeometry(QtCore.QRect(20, 380, 90, 23))
         self.generate_button.setObjectName("generate_button")
         self.choose_dir_button = QtWidgets.QToolButton(self)
         self.choose_dir_button.setGeometry(QtCore.QRect(490, 80, 25, 19))
