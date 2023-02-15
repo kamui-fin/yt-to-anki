@@ -129,7 +129,6 @@ class MW(Window):
             return
 
         self.write_settings()
-        return
 
         fields: FieldsConfiguration = FieldsConfiguration(
             note_type=note_type,

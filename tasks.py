@@ -20,11 +20,6 @@ def run_invoke_cmd(context, cmd) -> invoke.runners.Result:
     )
 
 
-@task()
-def anki(context):
-    run_invoke_cmd(context, "anki")
-
-
 @task
 def test_unit(context):
     run_invoke_cmd(
@@ -122,9 +117,12 @@ def copy_source(context):
 def bundle_ffmpeg(context):
     # assumes directory ffmpeg/ exists in current directory
     # moves ffmpeg.exe into dist/
-    if not Path("dist/ffmpeg").exists():
+    if not Path("dist/ffmpeg").exists() and Path("ffmpeg").exists():
         copytree("ffmpeg", "dist", dirs_exist_ok=True)
 
+@task()
+def anki(context):
+    run_invoke_cmd(context, "anki")
 
 # before running: link to addons21 with `ln -s ./dist ~/.local/share/Anki2/addons21/yt2srs`
 @task()
