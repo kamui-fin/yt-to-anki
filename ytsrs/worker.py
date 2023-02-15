@@ -30,13 +30,14 @@ class DlBar(QtWidgets.QDialog):
         self.label.setText("Downloading video and subtitles...")
         self.progressBar.setValue(0)
 
-        self.freqthread = DlThread(task=task, on_progress=self.on_youtube_progress)
-        self.freqthread.start()
+        self.freqthread = DlThread(task=task)
+        self.freqthread.on_progress.connect(lambda d: self.on_youtube_progress(d))
         self.freqthread.done.connect(lambda: self.finish_up(task=task))
         self.freqthread.is_error.connect(lambda: self.show_error())
+        self.freqthread.start()
         self.show()
 
-    def on_youtube_progress(self, d):
+    def on_youtube_progress(self, d: dict):
         if d["status"] == "downloading":
             ascii_escape = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
             p = ascii_escape.sub("", d["_percent_str"]).strip().replace("%", "")
@@ -59,18 +60,18 @@ class DlBar(QtWidgets.QDialog):
 class DlThread(QtCore.QThread):
     done = QtCore.pyqtSignal(bool)
     is_error = QtCore.pyqtSignal(bool)
+    on_progress = QtCore.pyqtSignal(dict)
 
-    def __init__(self, *, task: GenerateVideoTask, on_progress):
+    def __init__(self, *, task: GenerateVideoTask):
         super().__init__()
         self.task: GenerateVideoTask = task
         self.sources: Optional[YouTubeDownloadResult] = None
         self.error_message: str = ""
-        self.on_progress = on_progress
 
     def run(self):
         try:
             result: YouTubeDownloadResult = YouTubeClient.download_video_files(
-                self.task, self.on_progress
+                self.task, lambda p: self.on_progress.emit(p)
             )
             self.sources = result
             self.done.emit(True)
