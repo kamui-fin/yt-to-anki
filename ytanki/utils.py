@@ -1,6 +1,8 @@
 import os
+import datetime
 from subprocess import check_output, CalledProcessError
 from pathlib import Path
+from typing import List
 
 
 home = os.path.dirname(os.path.abspath(__file__))
@@ -35,3 +37,13 @@ def bool_to_string(bool_value: bool):
 
 def string_to_bool(string_value: str):
     return string_value == "true"
+
+
+def get_timestamp(time: str) -> datetime.datetime:
+    return datetime.datetime.strptime(time, "%H:%M:%S.%f")
+
+
+def with_limit(array: List, limit: int) -> List:
+    if limit == 0:
+        return array
+    return array[:limit]

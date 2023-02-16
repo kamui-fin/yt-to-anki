@@ -26,10 +26,9 @@ class YouTubeClient:
         YouTubeClient._download_subtitles(
             video_task=video_task, on_progress=on_progress
         )
-        video_info = YouTubeClient._download_video(
+        title = YouTubeClient._download_video(
             video_task=video_task, on_progress=on_progress
         )
-        title = video_info["title"]
 
         print(f"yt-to-anki: YouTubeClient: downloaded video: {title}")
 
@@ -54,6 +53,7 @@ class YouTubeClient:
     def _download_subtitles(video_task: GenerateVideoTask, on_progress):
         if os.path.exists(video_task.path_to_downloaded_subtitles):
             shutil.rmtree(video_task.path_to_downloaded_subtitles)
+
         subtitle_output_file_template = os.path.join(
             video_task.path_to_downloaded_subtitles, "%(title)s-%(id)s.%(ext)s"
         )
@@ -129,4 +129,4 @@ class YouTubeClient:
             f"downloading video information: {video_task.youtube_video_url}"
         )
         video_info = ydl.extract_info(video_task.youtube_video_url, download=False)
-        return video_info
+        return video_info["title"] if video_info else "Youtube Video"

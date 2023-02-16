@@ -1,4 +1,5 @@
 import os
+import datetime
 from typing import Optional, List
 from dataclasses import dataclass
 
@@ -32,8 +33,8 @@ class GenerateVideoTask:
 @dataclass
 class SubtitleRange:
     text: str
-    time_start: str
-    time_end: str
+    time_start: datetime.datetime
+    time_end: datetime.datetime
     # Injected later when the picture and audio are produced.
     path_to_picture: Optional[str] = None
     path_to_audio: Optional[str] = None

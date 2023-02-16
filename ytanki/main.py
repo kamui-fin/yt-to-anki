@@ -106,7 +106,7 @@ class MainWindow(Window):
             output_dir,
             fields,
         )
-        worker.create_subs2srs_deck(task=task)
+        worker.create_deck(task=task)
 
     def read_settings(self):
         self.settings.beginGroup("MainWindow")

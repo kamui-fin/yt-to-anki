@@ -1,6 +1,8 @@
 from typing import List, Optional
 import webvtt
 
+from ytanki.utils import get_timestamp
+
 from .models import SubtitleRange
 
 
@@ -10,8 +12,8 @@ class YouTubeSubtitlesExtractor:
         subtitles: List[SubtitleRange] = [
             SubtitleRange(
                 text=caption.text.replace("\n", " ").strip(),
-                time_start=caption.start,
-                time_end=caption.end,
+                time_start=get_timestamp(caption.start),
+                time_end=get_timestamp(caption.end),
             )
             for caption in webvtt.read(filename)
         ]
@@ -27,6 +29,7 @@ class YouTubeSubtitlesExtractor:
     @staticmethod
     def optimize_subtitles(subtitles: List[SubtitleRange]) -> List[SubtitleRange]:
         assert isinstance(subtitles, list)
+
         # Nothing to optimize.
         if len(subtitles) < 2:
             return subtitles
@@ -34,6 +37,7 @@ class YouTubeSubtitlesExtractor:
         def merge(subtitle1: SubtitleRange, subtitle2: SubtitleRange):
             if subtitle1 == subtitle2:
                 return
+
             subtitle1.time_end = subtitle2.time_end
             subtitle1.text += " " + subtitle2.text
 
