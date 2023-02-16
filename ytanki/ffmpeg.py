@@ -1,13 +1,14 @@
 from pathlib import Path
 from subprocess import check_output
+import tempfile
 
 from ytanki.utils import get_ffmpeg
 
 
 class Ffmpeg:
-    def __init__(self, output_dir, subtitle, video_path, video_title):
+    def __init__(self, subtitle, video_path, video_title):
         self.time_diff = (subtitle.time_end - subtitle.time_start).total_seconds()
-        media_path_prefix = Path(output_dir).joinpath(
+        media_path_prefix = Path(tempfile.gettempdir()).joinpath(
             f"{video_title}_\
                   {str(subtitle.time_start).replace('.','_').replace(':','_')}_\
                   {str(self.time_diff.total_seconds()).replace('.','_').replace(':','_')}",

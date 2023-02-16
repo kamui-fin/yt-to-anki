@@ -32,8 +32,8 @@ class YouTubeClient:
 
         print(f"yt-to-anki: YouTubeClient: downloaded video: {title}")
 
-        path_to_video = glob(video_task.path_to_downloaded_videos + "/*")[0]
-        path_to_subtitles_file = glob(video_task.path_to_downloaded_subtitles + "/*")[0]
+        path_to_video = glob(video_task.video_path + "/*")[0]
+        path_to_subtitles_file = glob(video_task.subtitle_path + "/*")[0]
 
         subs: List[SubtitleRange] = YouTubeSubtitlesExtractor.parse_subtitles(
             path_to_subtitles_file
@@ -44,18 +44,18 @@ class YouTubeClient:
         result = YouTubeDownloadResult(
             video_title=title,
             subtitles=subs,
-            path_to_video=path_to_video,
-            path_to_subtitles_file=path_to_subtitles_file,
+            video_path=path_to_video,
+            subtitle_path=path_to_subtitles_file,
         )
         return result
 
     @staticmethod
     def _download_subtitles(video_task: GenerateVideoTask, on_progress):
-        if os.path.exists(video_task.path_to_downloaded_subtitles):
-            shutil.rmtree(video_task.path_to_downloaded_subtitles)
+        if os.path.exists(video_task.subtitle_path):
+            shutil.rmtree(video_task.subtitle_path)
 
         subtitle_output_file_template = os.path.join(
-            video_task.path_to_downloaded_subtitles, "%(title)s-%(id)s.%(ext)s"
+            video_task.subtitle_path, "%(title)s-%(id)s.%(ext)s"
         )
         ydl_opts = {
             "subtitleslangs": [video_task.language],
@@ -75,7 +75,7 @@ class YouTubeClient:
         ydl = youtube_dl.YoutubeDL(ydl_opts)
         ydl.download([video_task.youtube_video_url])
 
-        if not glob(video_task.path_to_downloaded_subtitles + "/*"):
+        if not glob(video_task.subtitle_path + "/*"):
             if video_task.fallback:
                 opts_no_lang = {**ydl_opts, "writeautomaticsub": True}
                 print(
@@ -91,10 +91,10 @@ class YouTubeClient:
 
     @staticmethod
     def _download_video(video_task: GenerateVideoTask, on_progress):
-        if os.path.exists(video_task.path_to_downloaded_videos):
-            shutil.rmtree(video_task.path_to_downloaded_videos)
+        if os.path.exists(video_task.video_path):
+            shutil.rmtree(video_task.video_path)
         video_output_file_template = os.path.join(
-            video_task.path_to_downloaded_videos, "%(title)s-%(id)s.%(ext)s"
+            video_task.video_path, "%(title)s-%(id)s.%(ext)s"
         )
         vid_opts = {
             "no_color": True,

@@ -34,11 +34,11 @@ class DownloadYouTubeVideoBar(ProgressBarDialog):
     def __init__(self):
         super().__init__("Downloading...", "Downloading video and subtitles...")
 
-    def setup_ui(self, *, task: GenerateVideoTask):
+    def setup_ui(self, task: GenerateVideoTask):
         self.download_thread = DownloadYouTubeVideoThread(task=task)
-        self.download_thread.on_progress.connect(lambda d: self.on_youtube_progress(d))
-        self.download_thread.done.connect(lambda: self.finish_up(task=task))
-        self.download_thread.is_error.connect(lambda: self.show_error())
+        self.download_thread.on_progress.connect(self.on_youtube_progress)
+        self.download_thread.done.connect(lambda: self.finish_up(task))
+        self.download_thread.is_error.connect(self.show_error)
         self.download_thread.start()
         self.show()
 
@@ -55,7 +55,7 @@ class DownloadYouTubeVideoBar(ProgressBarDialog):
         msg = self.download_thread.error_message
         showCritical(msg)
 
-    def finish_up(self, *, task):
+    def finish_up(self, task):
         self.close()
         youtube_download_result = self.download_thread.sources
         if youtube_download_result:
@@ -68,7 +68,7 @@ class DownloadYouTubeVideoThread(QtCore.QThread):
     is_error = QtCore.pyqtSignal(bool)
     on_progress = QtCore.pyqtSignal(dict)
 
-    def __init__(self, *, task: GenerateVideoTask):
+    def __init__(self, task: GenerateVideoTask):
         super().__init__()
         self.task: GenerateVideoTask = task
         self.error_message: str = ""
@@ -129,12 +129,12 @@ class GenerateCardsBar(ProgressBarDialog):
         senCard[fields.text_field] = subtitle_range.text
 
         # Audio
-        audiofname = mw.col.media.addFile(subtitle_range.path_to_audio)
+        audiofname = mw.col.media.addFile(subtitle_range.audio_path)
         ankiaudiofname = "[sound:%s]" % audiofname
         senCard[fields.audio_field] = ankiaudiofname
 
         # Picture
-        picfname = mw.col.media.addFile(subtitle_range.path_to_picture)
+        picfname = mw.col.media.addFile(subtitle_range.picture_path)
         ankipicname = '<img src="%s">' % picfname
         senCard[fields.picture_field] = ankipicname
 
@@ -166,8 +166,8 @@ class GenerateCardsThread(QtCore.QThread):
         self.stop_flag = True
 
     def clean_up(self):
-        os.remove(self.youtube_download_result.path_to_video)
-        os.remove(self.youtube_download_result.path_to_subtitles_file)
+        os.remove(self.youtube_download_result.video_path)
+        os.remove(self.youtube_download_result.subtitle_path)
 
     def run(self):
         count = 0
@@ -180,9 +180,8 @@ class GenerateCardsThread(QtCore.QThread):
                 return self.clean_up()
 
             ffmpeg = Ffmpeg(
-                self.task.output_dir,
                 subtitle,
-                self.youtube_download_result.path_to_video,
+                self.youtube_download_result.video_path,
                 self.youtube_download_result.video_title,
             )
             try:
@@ -209,6 +208,6 @@ class GenerateCardsThread(QtCore.QThread):
         self.finish_time.emit(finished_time, len(subtitles))
 
 
-def create_deck(*, task: GenerateVideoTask):
+def create_deck(task: GenerateVideoTask):
     dl_bar = DownloadYouTubeVideoBar()
     dl_bar.setup_ui(task=task)

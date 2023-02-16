@@ -5,6 +5,8 @@ from dataclasses import dataclass
 
 from anki.collection import Collection
 
+from ytanki.utils import get_addon_directory
+
 
 @dataclass
 class FieldsConfiguration:
@@ -23,11 +25,9 @@ class GenerateVideoTask:
     dimensions: str
     limit: int
     collection: Collection
-    output_dir: str
     fields: FieldsConfiguration
-    home: str = os.path.dirname(os.path.abspath(__file__))
-    path_to_downloaded_videos: str = os.path.join(home, "vid")
-    path_to_downloaded_subtitles: str = os.path.join(home, "subs")
+    video_path: str = os.path.join(get_addon_directory(), "vid")
+    subtitle_path: str = os.path.join(get_addon_directory(), "subs")
 
 
 @dataclass
@@ -36,17 +36,17 @@ class SubtitleRange:
     time_start: datetime.datetime
     time_end: datetime.datetime
     # Injected later when the picture and audio are produced.
-    path_to_picture: Optional[str] = None
-    path_to_audio: Optional[str] = None
+    picture_path: Optional[str] = None
+    audio_path: Optional[str] = None
 
     def add_paths_to_picture_and_audio(self, path_to_picture: str, path_to_audio: str):
-        self.path_to_picture = path_to_picture
-        self.path_to_audio = path_to_audio
+        self.picture_path = path_to_picture
+        self.audio_path = path_to_audio
 
 
 @dataclass
 class YouTubeDownloadResult:
     video_title: str
     subtitles: List[SubtitleRange]
-    path_to_video: str
-    path_to_subtitles_file: str
+    video_path: str
+    subtitle_path: str

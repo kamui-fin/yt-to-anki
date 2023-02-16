@@ -47,3 +47,7 @@ def with_limit(array: List, limit: int) -> List:
     if limit == 0:
         return array
     return array[:limit]
+
+
+def get_addon_directory() -> str:
+    return os.path.dirname(os.path.abspath(__file__))
