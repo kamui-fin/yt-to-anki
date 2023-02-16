@@ -15,9 +15,6 @@ class Window(QtWidgets.QWidget):
         self.label_2 = QtWidgets.QLabel(self)
         self.label_2.setGeometry(QtCore.QRect(10, 60, 80, 16))
         self.label_2.setObjectName("label_2")
-        self.output_box = QtWidgets.QLineEdit(self)
-        self.output_box.setGeometry(QtCore.QRect(10, 80, 471, 20))
-        self.output_box.setObjectName("output_box")
         self.groupBox = QtWidgets.QGroupBox(self)
         self.groupBox.setGeometry(QtCore.QRect(10, 120, 311, 241))
         self.groupBox.setObjectName("groupBox")
@@ -133,9 +130,6 @@ class Window(QtWidgets.QWidget):
         self.generate_button = QtWidgets.QPushButton(self)
         self.generate_button.setGeometry(QtCore.QRect(20, 380, 90, 23))
         self.generate_button.setObjectName("generate_button")
-        self.choose_dir_button = QtWidgets.QToolButton(self)
-        self.choose_dir_button.setGeometry(QtCore.QRect(490, 80, 25, 19))
-        self.choose_dir_button.setObjectName("choose_dir_button")
 
         self.retranslateUi()
         QtCore.QMetaObject.connectSlotsByName(self)
@@ -144,7 +138,6 @@ class Window(QtWidgets.QWidget):
         _translate = QtCore.QCoreApplication.translate
         self.setWindowTitle(_translate("self", "Youtube to Anki"))
         self.label.setText(_translate("self", "Video Link"))
-        self.label_2.setText(_translate("self", "Output Folder"))
         self.groupBox.setTitle(_translate("self", "Export Settings"))
         self.label_3.setText(_translate("self", "Note Type"))
         self.label_4.setText(_translate("self", "Text Field"))
@@ -163,10 +156,9 @@ class Window(QtWidgets.QWidget):
         self.label_20.setText(_translate("self", "Limit (optional)"))
         self.label_21.setText(_translate("self", "0 = Off"))
         self.generate_button.setText(_translate("self", "Generate!"))
-        self.choose_dir_button.setText(_translate("self", "..."))
 
 
-def run():
+if __name__ == "__main__":
     import sys
 
     app = QtWidgets.QApplication(sys.argv)

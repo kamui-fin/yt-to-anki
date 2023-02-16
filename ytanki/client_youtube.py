@@ -6,31 +6,11 @@ from typing import List
 
 import yt_dlp as youtube_dl
 
-from .models import GenerateVideoTask
+from .models import GenerateVideoTask, YouTubeDownloadResult
 from .subtitles_extractor import SubtitleRange, YouTubeSubtitlesExtractor
 from .errors import NoSubtitlesException
 
 sys.stderr.isatty = lambda: False
-
-
-class YouTubeDownloadResult:
-    def __init__(
-        self,
-        video_title: str,
-        subtitles: List[SubtitleRange],
-        path_to_video: str,
-        path_to_subtitles_file: str,
-    ):
-        assert isinstance(video_title, str), video_title
-        assert isinstance(subtitles, list), subtitles
-        assert isinstance(path_to_video, str), path_to_video
-        assert isinstance(path_to_subtitles_file, str), path_to_subtitles_file
-        assert os.path.isfile(path_to_video), path_to_video
-        assert os.path.isfile(path_to_subtitles_file), path_to_subtitles_file
-        self.video_title: str = video_title
-        self.subtitles: List[SubtitleRange] = subtitles
-        self.path_to_video: str = path_to_video
-        self.path_to_subtitles_file: str = path_to_subtitles_file
 
 
 class YouTubeClient:
@@ -46,15 +26,14 @@ class YouTubeClient:
         YouTubeClient._download_subtitles(
             video_task=video_task, on_progress=on_progress
         )
-        video_info = YouTubeClient._download_video(
+        title = YouTubeClient._download_video(
             video_task=video_task, on_progress=on_progress
         )
-        title = video_info["title"]
 
         print(f"yt-to-anki: YouTubeClient: downloaded video: {title}")
 
-        path_to_video = glob(video_task.path_to_downloaded_videos + "/*")[0]
-        path_to_subtitles_file = glob(video_task.path_to_downloaded_subtitles + "/*")[0]
+        path_to_video = glob(video_task.video_path + "/*")[0]
+        path_to_subtitles_file = glob(video_task.subtitle_path + "/*")[0]
 
         subs: List[SubtitleRange] = YouTubeSubtitlesExtractor.parse_subtitles(
             path_to_subtitles_file
@@ -65,17 +44,18 @@ class YouTubeClient:
         result = YouTubeDownloadResult(
             video_title=title,
             subtitles=subs,
-            path_to_video=path_to_video,
-            path_to_subtitles_file=path_to_subtitles_file,
+            video_path=path_to_video,
+            subtitle_path=path_to_subtitles_file,
         )
         return result
 
     @staticmethod
     def _download_subtitles(video_task: GenerateVideoTask, on_progress):
-        if os.path.exists(video_task.path_to_downloaded_subtitles):
-            shutil.rmtree(video_task.path_to_downloaded_subtitles)
+        if os.path.exists(video_task.subtitle_path):
+            shutil.rmtree(video_task.subtitle_path)
+
         subtitle_output_file_template = os.path.join(
-            video_task.path_to_downloaded_subtitles, "%(title)s-%(id)s.%(ext)s"
+            video_task.subtitle_path, "%(title)s-%(id)s.%(ext)s"
         )
         ydl_opts = {
             "subtitleslangs": [video_task.language],
@@ -95,7 +75,7 @@ class YouTubeClient:
         ydl = youtube_dl.YoutubeDL(ydl_opts)
         ydl.download([video_task.youtube_video_url])
 
-        if not glob(video_task.path_to_downloaded_subtitles + "/*"):
+        if not glob(video_task.subtitle_path + "/*"):
             if video_task.fallback:
                 opts_no_lang = {**ydl_opts, "writeautomaticsub": True}
                 print(
@@ -111,10 +91,10 @@ class YouTubeClient:
 
     @staticmethod
     def _download_video(video_task: GenerateVideoTask, on_progress):
-        if os.path.exists(video_task.path_to_downloaded_videos):
-            shutil.rmtree(video_task.path_to_downloaded_videos)
+        if os.path.exists(video_task.video_path):
+            shutil.rmtree(video_task.video_path)
         video_output_file_template = os.path.join(
-            video_task.path_to_downloaded_videos, "%(title)s-%(id)s.%(ext)s"
+            video_task.video_path, "%(title)s-%(id)s.%(ext)s"
         )
         vid_opts = {
             "no_color": True,
@@ -149,4 +129,4 @@ class YouTubeClient:
             f"downloading video information: {video_task.youtube_video_url}"
         )
         video_info = ydl.extract_info(video_task.youtube_video_url, download=False)
-        return video_info
+        return video_info["title"] if video_info else "Youtube Video"

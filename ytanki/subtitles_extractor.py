@@ -1,23 +1,9 @@
-import os
 from typing import List, Optional
 import webvtt
 
+from ytanki.utils import get_timestamp
 
-class SubtitleRange:
-    def __init__(self, text: str, time_start: str, time_end: str):
-        self.text: str = text
-        self.time_start: str = time_start
-        self.time_end: str = time_end
-
-        # Injected later when the picture and audio are produced.
-        self.path_to_picture: Optional[str] = None
-        self.path_to_audio: Optional[str] = None
-
-    def add_paths_to_picture_and_audio(self, path_to_picture: str, path_to_audio: str):
-        assert os.path.isfile(path_to_picture), path_to_picture
-        assert os.path.isfile(path_to_audio), path_to_audio
-        self.path_to_picture = path_to_picture
-        self.path_to_audio = path_to_audio
+from .models import SubtitleRange
 
 
 class YouTubeSubtitlesExtractor:
@@ -26,8 +12,8 @@ class YouTubeSubtitlesExtractor:
         subtitles: List[SubtitleRange] = [
             SubtitleRange(
                 text=caption.text.replace("\n", " ").strip(),
-                time_start=caption.start,
-                time_end=caption.end,
+                time_start=get_timestamp(caption.start),
+                time_end=get_timestamp(caption.end),
             )
             for caption in webvtt.read(filename)
         ]
@@ -43,6 +29,7 @@ class YouTubeSubtitlesExtractor:
     @staticmethod
     def optimize_subtitles(subtitles: List[SubtitleRange]) -> List[SubtitleRange]:
         assert isinstance(subtitles, list)
+
         # Nothing to optimize.
         if len(subtitles) < 2:
             return subtitles
@@ -50,6 +37,7 @@ class YouTubeSubtitlesExtractor:
         def merge(subtitle1: SubtitleRange, subtitle2: SubtitleRange):
             if subtitle1 == subtitle2:
                 return
+
             subtitle1.time_end = subtitle2.time_end
             subtitle1.text += " " + subtitle2.text
 
