@@ -1,23 +1,7 @@
-import os
 from typing import List, Optional
 import webvtt
 
-
-class SubtitleRange:
-    def __init__(self, text: str, time_start: str, time_end: str):
-        self.text: str = text
-        self.time_start: str = time_start
-        self.time_end: str = time_end
-
-        # Injected later when the picture and audio are produced.
-        self.path_to_picture: Optional[str] = None
-        self.path_to_audio: Optional[str] = None
-
-    def add_paths_to_picture_and_audio(self, path_to_picture: str, path_to_audio: str):
-        assert os.path.isfile(path_to_picture), path_to_picture
-        assert os.path.isfile(path_to_audio), path_to_audio
-        self.path_to_picture = path_to_picture
-        self.path_to_audio = path_to_audio
+from .models import SubtitleRange
 
 
 class YouTubeSubtitlesExtractor:

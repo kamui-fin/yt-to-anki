@@ -106,6 +106,3 @@ LANGUAGES = {
     "yo": "Yoruba",
     "zu": "Zulu",
 }
-
-lang_list = list(LANGUAGES.values())
-lang_list.insert(0, "")

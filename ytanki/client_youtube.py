@@ -6,31 +6,11 @@ from typing import List
 
 import yt_dlp as youtube_dl
 
-from .models import GenerateVideoTask
+from .models import GenerateVideoTask, YouTubeDownloadResult
 from .subtitles_extractor import SubtitleRange, YouTubeSubtitlesExtractor
 from .errors import NoSubtitlesException
 
 sys.stderr.isatty = lambda: False
-
-
-class YouTubeDownloadResult:
-    def __init__(
-        self,
-        video_title: str,
-        subtitles: List[SubtitleRange],
-        path_to_video: str,
-        path_to_subtitles_file: str,
-    ):
-        assert isinstance(video_title, str), video_title
-        assert isinstance(subtitles, list), subtitles
-        assert isinstance(path_to_video, str), path_to_video
-        assert isinstance(path_to_subtitles_file, str), path_to_subtitles_file
-        assert os.path.isfile(path_to_video), path_to_video
-        assert os.path.isfile(path_to_subtitles_file), path_to_subtitles_file
-        self.video_title: str = video_title
-        self.subtitles: List[SubtitleRange] = subtitles
-        self.path_to_video: str = path_to_video
-        self.path_to_subtitles_file: str = path_to_subtitles_file
 
 
 class YouTubeClient:

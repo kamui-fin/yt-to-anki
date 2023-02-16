@@ -1,4 +1,4 @@
-name: "yt2srs on Linux"
+name: "yt-to-anki on Linux"
 
 on:
   push:
