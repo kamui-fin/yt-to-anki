@@ -3,6 +3,7 @@ import invoke
 from invoke import task
 from pathlib import Path
 from shutil import copytree
+from markdown import markdown
 
 
 def one_line_command(string):
@@ -139,14 +140,39 @@ def anki(context):
     run_invoke_cmd(context, "anki")
 
 
+def remove_pycache():
+    [p.unlink() for p in Path(".").rglob("*.py[co]")]
+    [p.rmdir() for p in Path(".").rglob("__pycache__")]
+
+
 @task()
 def package_dev(context):
+    compile_ui(context)
     copy_source(context)
     bundle_libs(context)
     bundle_ffmpeg(context)
 
-    # TODO: package into .ankiaddon
-    #       filter out __pycache__
+
+@task()
+def compress(context):
+    run_invoke_cmd(context, "zip -r ytanki.ankiaddon dist/*")
+
+
+def readme_to_html():
+    Path("README.html").write_text(markdown(Path("README.md").read_text()))
+
+
+@task()
+def compile_ui(context):
+    run_invoke_cmd(context, "poetry run pyuic5 -x ytanki/gui.ui -o ytanki/gui.py")
+
+
+@task()
+def package(context):
+    readme_to_html()
+    package_dev(context)
+    remove_pycache()
+    compress(context)
 
 
 @task()

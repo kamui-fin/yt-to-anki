@@ -57,8 +57,9 @@ class DownloadYouTubeVideoBar(ProgressBarDialog):
 
     def finish_up(self, task):
         self.close()
+        print(self.download_thread.sources)
         youtube_download_result = self.download_thread.sources
-        if youtube_download_result:
+        if youtube_download_result is not None:
             dial = GenerateCardsBar()
             dial.setup_ui(task, youtube_download_result)
 

@@ -9,3 +9,5 @@ dist/
 # media output
 subs/
 vid/
+
+*.ankiaddon

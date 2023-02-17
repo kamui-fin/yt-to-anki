@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 import shutil
 from glob import glob
@@ -14,6 +15,13 @@ sys.stderr.isatty = lambda: False
 
 
 class YouTubeClient:
+    @staticmethod
+    def is_valid_link(link: str) -> bool:
+        exp = re.compile(
+            r"http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?"
+        )
+        return bool(exp.match(link))
+
     @staticmethod
     def download_video_files(
         video_task: GenerateVideoTask, on_progress

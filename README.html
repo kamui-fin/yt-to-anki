@@ -1,0 +1,56 @@
+<h1>Youtube to Anki</h1>
+<p>An anki addon that generates a full-fledged deck with audio and pictures from a youtube link using subtitles with the click of a button.
+This eliminates the need for having to download a video, or the accompanying subtitles, retiming them, and dealing with TSV files to import.
+For those of you familiar with Subs2SRS, consider this to be the Youtube version.</p>
+<p>This addon offers several features:</p>
+<ul>
+<li>Supports all languages</li>
+<li>Fallback to automatically generated subs if man-made captions could not be found</li>
+<li>Set a limit to how many cards are generated</li>
+<li>Choose the dimensions of the pictures</li>
+<li>Fast card generation</li>
+</ul>
+<h2>Installation</h2>
+<ol>
+<li>In <code>Tools &gt; Addons</code>, click <code>Get addon</code> and use the code <code>964531817</code></li>
+<li>Restart Anki for changes to take place</li>
+</ol>
+<p>If you are a Linux or Mac user, make sure to install <code>ffmpeg</code> using your package manager.</p>
+<h2>Usage</h2>
+<ol>
+<li>Enter the youtube link for the video</li>
+<li>Set an output folder for the audio and screenshots to go (can also be used for condensed audio)</li>
+<li>Choose the appropriate note type and fields for the card data</li>
+<li>Specify the subtitle language (default: English)</li>
+<li>Hit generate. After a bit, refresh your decks and you should see a deck named after the title of the video</li>
+</ol>
+<h2>Development</h2>
+<p>Before moving on, be sure you have <code>python</code> and <code>poetry</code> setup.</p>
+<ol>
+<li>Clone the repository</li>
+</ol>
+<p><code>git clone https://github.com/kamui-fin/yt-to-anki.git
+cd yt-to-anki</code></p>
+<ol>
+<li>Install dependencies</li>
+</ol>
+<p><code>poetry install</code></p>
+<ol>
+<li>Install pre-commit hooks</li>
+</ol>
+<p><code>poetry run pre-commit install</code></p>
+<ol>
+<li>If you are on windows, you need to create a top-level directory called <code>ffmpeg</code> with <a href="https://github.com/BtbN/FFmpeg-Builds/releases"><code>ffmpeg.exe</code></a> inside</li>
+<li>Bundle everything (or update the bundle)</li>
+</ol>
+<p><code>poetry run invoke package-dev</code></p>
+<ol>
+<li>Create a symlink of <code>dist/</code> inside of your Anki data's <code>addons21/</code> folder</li>
+</ol>
+<p><code>ln -s ./dist ~/.local/share/Anki2/addons21/yt-to-anki</code></p>
+<ol>
+<li>Now you can use the <code>dev</code> command for simultaneously running anki with the updated bundle</li>
+</ol>
+<p><code>poetry run invoke dev</code></p>
+<h2>Contributing</h2>
+<p>All contributions are gladly welcomed! Feel free to open an issue or create a pull request if you have any new changes/ideas in mind.</p>
