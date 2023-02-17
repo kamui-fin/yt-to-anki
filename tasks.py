@@ -35,33 +35,7 @@ def test_unit(context):
 
 
 @task
-def lint_mypy(context):
-    # Need to delete the cache every time because otherwise mypy gets
-    # stuck with 0 warnings very often.
-    run_invoke_cmd(
-        context,
-        """
-        poetry run mypy ytanki tests
-            --show-error-codes
-            --disable-error-code=arg-type
-            --disable-error-code=attr-defined
-            --disable-error-code=import
-            --disable-error-code=misc
-            --disable-error-code=no-any-return
-            --disable-error-code=no-redef
-            --disable-error-code=no-untyped-call
-            --disable-error-code=no-untyped-def
-            --disable-error-code=operator
-            --disable-error-code=type-arg
-            --disable-error-code=var-annotated
-            --disable-error-code=union-attr
-            --strict
-        """,
-    )
-
-
-@task
-def lint_black_diff(context):
+def format_black(context):
     command = """
         poetry run black *.py ytanki/ tests/unit/ --color 2>&1
     """
@@ -69,24 +43,20 @@ def lint_black_diff(context):
 
     # black always exits with 0, so we handle the output.
     if "reformatted" in result.stdout:
-        print("invoke: black found issues")  # noqa: T201
+        print("invoke: black found issues")
         result.exited = 1
         raise invoke.exceptions.UnexpectedExit(result)
 
 
 @task
-def lint_ruff(context, fix=False):
-    argument_fix = "--fix" if fix else ""
-    command = f"""
-        poetry run ruff *.py ytanki/ tests/unit/ {argument_fix}
-    """
-    run_invoke_cmd(context, command)
+def lint_pyright(context):
+    run_invoke_cmd(context, "poetry run pyright")
 
 
 @task()
 def lint(context):
-    lint_black_diff(context)
-    lint_ruff(context)
+    format_black(context)
+    lint_pyright(context)
 
 
 @task()
@@ -123,12 +93,12 @@ def bundle_libs(context):
 
 
 @task()
-def copy_source(context):
+def copy_source(_):
     copytree("ytanki", "dist", dirs_exist_ok=True)
 
 
 @task()
-def bundle_ffmpeg(context):
+def bundle_ffmpeg(_):
     # assumes directory ffmpeg/ exists in current directory
     # moves ffmpeg.exe into dist/
     if not Path("dist/ffmpeg").exists() and Path("ffmpeg").exists():

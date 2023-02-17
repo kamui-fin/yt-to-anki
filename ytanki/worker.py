@@ -21,7 +21,7 @@ class ProgressBarDialog(QtWidgets.QDialog):
         self.resize(350, 77)
         self.label = QtWidgets.QLabel(self)
         self.label.setGeometry(QtCore.QRect(0, 20, self.width(), 13))
-        self.label.setAlignment(Qt.AlignCenter)
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.progress_bar = QtWidgets.QProgressBar(self)
         self.progress_bar.setGeometry(QtCore.QRect(10, 40, 330, 23))
         self.setWindowTitle(window_title)
@@ -102,7 +102,7 @@ class GenerateCardsBar(ProgressBarDialog):
             youtube_download_result=youtube_download_result,
         )
         self.gen_thread.update_num.connect(self.update_progress)
-        self.gen_thread.add_to_deck_signal.connect(self.add_card)
+        self.gen_thread.add_to_deck_signal.connect(self.add_card)  # type: ignore
         self.gen_thread.finished.connect(self.finish_up)
         self.gen_thread.finish_time.connect(self.show_time)
         self.gen_thread.start()
@@ -186,7 +186,7 @@ class GenerateCardsThread(QtCore.QThread):
             )
             try:
                 ffmpeg.generate_media(self.task.dimensions)
-            except:  # noqa: E722 # FIXME: Do not use bare `except`
+            except:
                 continue
 
             count += 1

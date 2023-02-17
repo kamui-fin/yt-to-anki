@@ -1295,6 +1295,25 @@ files = [
 ]
 
 [[package]]
+name = "pyright"
+version = "1.1.294"
+description = "Command line wrapper for pyright"
+category = "dev"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "pyright-1.1.294-py3-none-any.whl", hash = "sha256:5b27e28a1cfc60cea707fd3b644769fa6dd0b194481cdcc2399cf2a51cc5a846"},
+    {file = "pyright-1.1.294.tar.gz", hash = "sha256:fea5fed3d6a3f02259e622c901e86a7b8bcf237d35e1cdfe01d0e0723768dcb6"},
+]
+
+[package.dependencies]
+nodeenv = ">=1.6.0"
+
+[package.extras]
+all = ["twine (>=3.4.1)"]
+dev = ["twine (>=3.4.1)"]
+
+[[package]]
 name = "pyrsistent"
 version = "0.19.3"
 description = "Persistent/Functional/Immutable data structures"
@@ -1780,4 +1799,4 @@ url = "https://github.com/ytdl-patched/yt-dlp/archive/refs/tags/2023.02.17.334.t
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "c4a802da5f3b6f8f7aeaebb5b5ccb85e71f6ad350482b2c59961001f0e9afc40"
+content-hash = "48c041fc7f7cb40a909ac11816ffbfb62cd5e889ecfe5d30f9f72ab9de73145c"

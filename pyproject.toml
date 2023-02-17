@@ -15,13 +15,17 @@ yt-dlp = {url = "https://github.com/ytdl-patched/yt-dlp/archive/refs/tags/2023.0
 invoke = "^2.0.0"
 black = "^23.1.0"
 pytest = "^7.2.1"
-ruff = "^0.0.246"
-mypy = "^1.0.0"
 aqt = {extras = ["qt5"], version = "^2.1.57"}
 coverage = "^7.1.0"
 pre-commit = "^3.0.4"
 markdown2 = "^2.4.8"
+pyright = "^1.1.294"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pyright]
+include = ["ytanki", "tests"]
+exclude = ["**/__pycache__", "ytanki/gui.py"]
+reportOptionalMemberAccess = false

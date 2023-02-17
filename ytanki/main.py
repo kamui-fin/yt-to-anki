@@ -53,7 +53,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def get_fields_for_note(self, note_type: str):
         fields = mw.col.db.list(
-            "SELECT FIELDS.name FROM FIELDS INNER JOIN notetypes ON FIELDS.ntid = notetypes.id WHERE notetypes.name = ?",  # noqa: E501
+            "SELECT FIELDS.name FROM FIELDS INNER JOIN notetypes ON FIELDS.ntid = notetypes.id WHERE notetypes.name = ?",
             note_type,
         )
         return fields
