@@ -2,7 +2,8 @@ import re
 import invoke
 from invoke import task
 from pathlib import Path
-from shutil import copytree, copy
+from shutil import copytree
+from markdown import markdown
 
 
 def one_line_command(string):
@@ -114,23 +115,10 @@ def bundle_libs(context):
         / "python3.10"  # TODO: dynamically find this directory
         / "site-packages"
     )
-    print("Bundling the following packages:")
-    tree = run_invoke_cmd(
-        context, "poetry show --without dev --tree"
-    ).stdout.splitlines()
-    deps = [
-        dep[re.search(r"[a-zA-Z0-9]", dep).start() :]
-        .split()[0]
-        .strip()
-        .replace("-", "_")
-        for dep in tree
-    ]
+    deps = ["webvtt", "yt_dlp"]
     for dep in deps:
         dep_path = venv_location.joinpath(dep)
-        with_py = dep_path.with_suffix(".py")
-        if with_py.exists():
-            copy(with_py, lib_location / with_py.name)
-        elif dep_path.exists():
+        if dep_path.exists():
             copytree(dep_path, lib_location / dep)
 
 
@@ -152,14 +140,39 @@ def anki(context):
     run_invoke_cmd(context, "anki")
 
 
+def remove_pycache():
+    [p.unlink() for p in Path(".").rglob("*.py[co]")]
+    [p.rmdir() for p in Path(".").rglob("__pycache__")]
+
+
 @task()
 def package_dev(context):
+    compile_ui(context)
     copy_source(context)
     bundle_libs(context)
     bundle_ffmpeg(context)
 
-    # TODO: package into .ankiaddon
-    #       filter out __pycache__
+
+@task()
+def compress(context):
+    run_invoke_cmd(context, "zip -r ytanki.ankiaddon dist/*")
+
+
+def readme_to_html():
+    Path("README.html").write_text(markdown(Path("README.md").read_text()))
+
+
+@task()
+def compile_ui(context):
+    run_invoke_cmd(context, "poetry run pyuic5 -x ytanki/gui.ui -o ytanki/gui.py")
+
+
+@task()
+def package(context):
+    readme_to_html()
+    package_dev(context)
+    remove_pycache()
+    compress(context)
 
 
 @task()

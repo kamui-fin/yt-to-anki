@@ -8,8 +8,8 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-yt-dlp = "^2023.1.6"
 webvtt-py = "^0.4.6"
+yt-dlp = {url = "https://github.com/ytdl-patched/yt-dlp/archive/refs/tags/2023.02.17.334.tar.gz"}
 
 [tool.poetry.group.dev.dependencies]
 invoke = "^2.0.0"
@@ -20,6 +20,7 @@ mypy = "^1.0.0"
 aqt = {extras = ["qt5"], version = "^2.1.57"}
 coverage = "^7.1.0"
 pre-commit = "^3.0.4"
+markdown = "^3.4.1"
 
 [build-system]
 requires = ["poetry-core"]

@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 import shutil
 from glob import glob
@@ -15,6 +16,13 @@ sys.stderr.isatty = lambda: False
 
 class YouTubeClient:
     @staticmethod
+    def is_valid_link(link: str) -> bool:
+        exp = re.compile(
+            r"http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?"
+        )
+        return bool(exp.match(link))
+
+    @staticmethod
     def download_video_files(
         video_task: GenerateVideoTask, on_progress
     ) -> YouTubeDownloadResult:
@@ -23,12 +31,8 @@ class YouTubeClient:
             f"{video_task.youtube_video_url}"
         )
 
-        YouTubeClient._download_subtitles(
-            video_task=video_task, on_progress=on_progress
-        )
-        title = YouTubeClient._download_video(
-            video_task=video_task, on_progress=on_progress
-        )
+        YouTubeClient._download_subtitles(video_task, on_progress)
+        title = YouTubeClient._download_video(video_task, on_progress)
 
         print(f"yt-to-anki: YouTubeClient: downloaded video: {title}")
 
@@ -42,10 +46,10 @@ class YouTubeClient:
             subs = YouTubeSubtitlesExtractor.optimize_subtitles(subs)
 
         result = YouTubeDownloadResult(
-            video_title=title,
-            subtitles=subs,
-            video_path=path_to_video,
-            subtitle_path=path_to_subtitles_file,
+            title,
+            subs,
+            path_to_video,
+            path_to_subtitles_file,
         )
         return result
 

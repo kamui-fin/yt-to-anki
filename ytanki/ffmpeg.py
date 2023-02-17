@@ -11,7 +11,7 @@ class Ffmpeg:
         media_path_prefix = Path(tempfile.gettempdir()).joinpath(
             f"{video_title}_\
                   {str(subtitle.time_start).replace('.','_').replace(':','_')}_\
-                  {str(self.time_diff.total_seconds()).replace('.','_').replace(':','_')}",
+                  {str(self.time_diff).replace('.','_').replace(':','_')}",
         )
         self.audio_path = str(media_path_prefix.with_suffix(".mp3"))
         self.picture_path = str(media_path_prefix.with_suffix(".jpeg"))
