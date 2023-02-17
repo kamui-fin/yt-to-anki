@@ -97,6 +97,7 @@ class YouTubeClient:
     def _download_video(video_task: GenerateVideoTask, on_progress):
         if os.path.exists(video_task.video_path):
             shutil.rmtree(video_task.video_path)
+
         video_output_file_template = os.path.join(
             video_task.video_path, "%(title)s-%(id)s.%(ext)s"
         )

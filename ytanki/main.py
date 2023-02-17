@@ -98,7 +98,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             mw.col,
             fields,
         )
-        worker.create_deck(task=task)
+        self.worker_ui = worker.create_deck(task=task)
 
     def read_settings(self):
         self.settings.beginGroup("MainWindow")
