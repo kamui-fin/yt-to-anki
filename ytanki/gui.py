@@ -173,6 +173,7 @@ class Ui_MainWindow(object):
         self.limit_desc.setObjectName("limit_desc")
         self.verticalLayout_8.addWidget(self.limit_desc)
         self.limit_input = QtWidgets.QSpinBox(self.groupBox)
+        self.limit_input.setMaximum(10000)
         self.limit_input.setObjectName("limit_input")
         self.verticalLayout_8.addWidget(self.limit_input)
         spacerItem8 = QtWidgets.QSpacerItem(
