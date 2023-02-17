@@ -2,7 +2,7 @@ import re
 import invoke
 from invoke import task
 from pathlib import Path
-from shutil import copytree, copy
+from shutil import copytree
 
 
 def one_line_command(string):
@@ -114,23 +114,10 @@ def bundle_libs(context):
         / "python3.10"  # TODO: dynamically find this directory
         / "site-packages"
     )
-    print("Bundling the following packages:")
-    tree = run_invoke_cmd(
-        context, "poetry show --without dev --tree"
-    ).stdout.splitlines()
-    deps = [
-        dep[re.search(r"[a-zA-Z0-9]", dep).start() :]
-        .split()[0]
-        .strip()
-        .replace("-", "_")
-        for dep in tree
-    ]
+    deps = ["webvtt", "yt_dlp"]
     for dep in deps:
         dep_path = venv_location.joinpath(dep)
-        with_py = dep_path.with_suffix(".py")
-        if with_py.exists():
-            copy(with_py, lib_location / with_py.name)
-        elif dep_path.exists():
+        if dep_path.exists():
             copytree(dep_path, lib_location / dep)
 
 

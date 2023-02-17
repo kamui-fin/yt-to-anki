@@ -23,12 +23,8 @@ class YouTubeClient:
             f"{video_task.youtube_video_url}"
         )
 
-        YouTubeClient._download_subtitles(
-            video_task=video_task, on_progress=on_progress
-        )
-        title = YouTubeClient._download_video(
-            video_task=video_task, on_progress=on_progress
-        )
+        YouTubeClient._download_subtitles(video_task, on_progress)
+        title = YouTubeClient._download_video(video_task, on_progress)
 
         print(f"yt-to-anki: YouTubeClient: downloaded video: {title}")
 
@@ -42,10 +38,10 @@ class YouTubeClient:
             subs = YouTubeSubtitlesExtractor.optimize_subtitles(subs)
 
         result = YouTubeDownloadResult(
-            video_title=title,
-            subtitles=subs,
-            video_path=path_to_video,
-            subtitle_path=path_to_subtitles_file,
+            title,
+            subs,
+            path_to_video,
+            path_to_subtitles_file,
         )
         return result
 

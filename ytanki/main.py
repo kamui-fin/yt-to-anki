@@ -42,7 +42,7 @@ class MainWindow(Window):
         self.text_box.addItems(fields)
 
     def get_note_types(self):
-        return mw.col.models.all_names()
+        return mw.col.models.allNames()
 
     def get_fields_for_note(self, note_type: str):
         fields = mw.col.db.list(
@@ -157,7 +157,7 @@ class MainWindow(Window):
 
 
 def launch():
-    screen = MainWindow()
+    mw.yt_anki_screen = screen = MainWindow()
     screen.setup_ui()
     # dependency check
     if not has_ffmpeg():
