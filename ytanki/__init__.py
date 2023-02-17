@@ -9,6 +9,6 @@ if "pytest" not in sys.modules:
     from aqt.qt import *
     from .main import launch
 
-    action = QAction("Youtube to Anki", mw)
+    action = QAction("YouTube to Anki", mw)
     action.triggered.connect(launch)
     mw.form.menuTools.addAction(action)

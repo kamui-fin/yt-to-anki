@@ -134,4 +134,4 @@ class YouTubeClient:
             f"downloading video information: {video_task.youtube_video_url}"
         )
         video_info = ydl.extract_info(video_task.youtube_video_url, download=False)
-        return video_info["title"] if video_info else "Youtube Video"
+        return video_info["title"] if video_info else "YouTube Video"
