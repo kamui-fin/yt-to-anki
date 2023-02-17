@@ -800,6 +800,23 @@ files = [
 testing = ["coverage", "pyyaml"]
 
 [[package]]
+name = "markdown2"
+version = "2.4.8"
+description = "A fast and complete Python implementation of Markdown"
+category = "dev"
+optional = false
+python-versions = ">=3.5, <4"
+files = [
+    {file = "markdown2-2.4.8-py2.py3-none-any.whl", hash = "sha256:7d49ca871d3e0e412c65d7d21fcbc13ae897f7876f3e5f14dd4db3b7fbf27f10"},
+    {file = "markdown2-2.4.8.tar.gz", hash = "sha256:90475aca3d9c8e7df6d70c51de5bbbe9edf7fcf6a380bd1044d321500f5445da"},
+]
+
+[package.extras]
+all = ["pygments (>=2.7.3)", "wavedrom"]
+code-syntax-highlighting = ["pygments (>=2.7.3)"]
+wavedrom = ["wavedrom"]
+
+[[package]]
 name = "markupsafe"
 version = "2.1.2"
 description = "Safely add untrusted strings to HTML/XML markup."
@@ -1763,4 +1780,4 @@ url = "https://github.com/ytdl-patched/yt-dlp/archive/refs/tags/2023.02.17.334.t
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "22a90744d705767062017b4538e95aecb439eadc0383246c3926544387b80939"
+content-hash = "c4a802da5f3b6f8f7aeaebb5b5ccb85e71f6ad350482b2c59961001f0e9afc40"

@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 from anki.collection import Collection
 
-from ytanki.utils import get_addon_directory
+from .utils import get_addon_directory
 
 
 @dataclass
