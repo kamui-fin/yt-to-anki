@@ -312,7 +312,11 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QSpinBox" name="limit_input"/>
+                  <widget class="QSpinBox" name="limit_input">
+                   <property name="maximum">
+                    <number>10000</number>
+                   </property>
+                  </widget>
                  </item>
                  <item>
                   <spacer name="verticalSpacer_2">

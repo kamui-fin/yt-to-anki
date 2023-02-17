@@ -1,4 +1,3 @@
-import os
 import re
 import time
 from typing import List, Optional
@@ -28,6 +27,7 @@ class ProgressBarDialog(QtWidgets.QDialog):
         self.setWindowTitle(window_title)
         self.label.setText(progress_label)
         self.progress_bar.setValue(0)
+        self.show()
 
 
 class DownloadYouTubeVideoBar(ProgressBarDialog):
@@ -56,12 +56,13 @@ class DownloadYouTubeVideoBar(ProgressBarDialog):
         showCritical(msg)
 
     def finish_up(self, task):
+        self.download_thread.quit()
+        self.download_thread.wait()
         self.close()
-        print(self.download_thread.sources)
         youtube_download_result = self.download_thread.sources
         if youtube_download_result is not None:
-            dial = GenerateCardsBar()
-            dial.setup_ui(task, youtube_download_result)
+            self.gen_bar = GenerateCardsBar()
+            self.gen_bar.setup_ui(task, youtube_download_result)
 
 
 class DownloadYouTubeVideoThread(QtCore.QThread):
@@ -96,21 +97,27 @@ class GenerateCardsBar(ProgressBarDialog):
     def setup_ui(
         self, task: GenerateVideoTask, youtube_download_result: YouTubeDownloadResult
     ):
-        self.thread_class = GenerateCardsThread(
+        self.gen_thread = GenerateCardsThread(
             task=task,
             youtube_download_result=youtube_download_result,
         )
-        self.thread_class.update_num.connect(self.updateProgress)
-        self.thread_class.add_to_deck_signal.connect(self.add_card)
-        self.thread_class.finished.connect(self.close)
-        self.thread_class.finish_time.connect(self.showTime)
-        self.thread_class.start()
-        self.show()
+        self.gen_thread.update_num.connect(self.update_progress)
+        self.gen_thread.add_to_deck_signal.connect(self.add_card)
+        self.gen_thread.finished.connect(self.finish_up)
+        self.gen_thread.finish_time.connect(self.show_time)
+        self.gen_thread.start()
+        pass
 
-    def updateProgress(self, val):
+    def finish_up(self):
+        self.gen_thread.stop()
+        self.gen_thread.quit()
+        self.gen_thread.wait()
+        self.close()
+
+    def update_progress(self, val):
         self.progress_bar.setValue(val)
 
-    def showTime(self, duration, total_cards):
+    def show_time(self, duration, total_cards):
         showInfo(f"Generated {total_cards} cards in {str(round(duration, 1))} seconds")
 
     @QtCore.pyqtSlot(SubtitleRange, str, FieldsConfiguration)
@@ -142,10 +149,6 @@ class GenerateCardsBar(ProgressBarDialog):
         mw.col.addNote(senCard)
         mw.col.save()
 
-    def closeEvent(self, event):
-        self.thread_class.stop()
-        super(GenerateCardsBar, self).closeEvent(event)
-
 
 class GenerateCardsThread(QtCore.QThread):
     update_num = QtCore.pyqtSignal(int)
@@ -166,10 +169,6 @@ class GenerateCardsThread(QtCore.QThread):
     def stop(self):
         self.stop_flag = True
 
-    def clean_up(self):
-        os.remove(self.youtube_download_result.video_path)
-        os.remove(self.youtube_download_result.subtitle_path)
-
     def run(self):
         count = 0
         timer_start = time.perf_counter()
@@ -178,7 +177,7 @@ class GenerateCardsThread(QtCore.QThread):
         )
         for subtitle in subtitles:
             if self.stop_flag:
-                return self.clean_up()
+                break
 
             ffmpeg = Ffmpeg(
                 subtitle,
@@ -203,8 +202,6 @@ class GenerateCardsThread(QtCore.QThread):
         timer_end = time.perf_counter()
         finished_time = timer_end - timer_start
 
-        self.clean_up()
-
         self.finished.emit(True)
         self.finish_time.emit(finished_time, len(subtitles))
 
@@ -212,3 +209,4 @@ class GenerateCardsThread(QtCore.QThread):
 def create_deck(task: GenerateVideoTask):
     dl_bar = DownloadYouTubeVideoBar()
     dl_bar.setup_ui(task=task)
+    return dl_bar
