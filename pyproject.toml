@@ -20,7 +20,7 @@ mypy = "^1.0.0"
 aqt = {extras = ["qt5"], version = "^2.1.57"}
 coverage = "^7.1.0"
 pre-commit = "^3.0.4"
-markdown = "^3.4.1"
+markdown2 = "^2.4.8"
 
 [build-system]
 requires = ["poetry-core"]

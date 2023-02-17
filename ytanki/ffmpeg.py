@@ -2,7 +2,7 @@ from pathlib import Path
 from subprocess import check_output
 import tempfile
 
-from ytanki.utils import get_ffmpeg
+from .utils import get_ffmpeg
 
 
 class Ffmpeg:

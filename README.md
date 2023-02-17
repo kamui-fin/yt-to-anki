@@ -1,8 +1,6 @@
 # Youtube to Anki
 
-An anki addon that generates a full-fledged deck with audio and pictures from a youtube link using subtitles with the click of a button.
-This eliminates the need for having to download a video, or the accompanying subtitles, retiming them, and dealing with TSV files to import.
-For those of you familiar with Subs2SRS, consider this to be the Youtube version.
+An anki addon that generates a full-fledged deck with audio and pictures from a youtube link using subtitles with the click of a button. This eliminates the need for having to download a video, or the accompanying subtitles, retiming them, and dealing with TSV files to import. For those of you familiar with Subs2SRS, consider this to be the Youtube version.
 
 This addon offers several features:
 

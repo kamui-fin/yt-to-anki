@@ -1,7 +1,7 @@
 from typing import List, Optional
 import webvtt
 
-from ytanki.utils import get_timestamp
+from .utils import get_timestamp
 
 from .models import SubtitleRange
 

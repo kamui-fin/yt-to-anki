@@ -3,7 +3,7 @@ import invoke
 from invoke import task
 from pathlib import Path
 from shutil import copytree
-from markdown import markdown
+from markdown2 import markdown
 
 
 def one_line_command(string):
@@ -155,11 +155,36 @@ def package_dev(context):
 
 @task()
 def compress(context):
-    run_invoke_cmd(context, "zip -r ytanki.ankiaddon dist/*")
+    run_invoke_cmd(context, "(cd dist && zip -r $OLDPWD/ytanki.ankiaddon .)")
 
 
-def readme_to_html():
-    Path("README.html").write_text(markdown(Path("README.md").read_text()))
+# Credit to https://github.com/luoliyan/chinese-support-redux/blob/master/convert-readme.py
+@task
+def readme_to_html(context):
+    """Covert GitHub mardown to AnkiWeb HTML."""
+    # permitted tags: img, a, b, i, code, ul, ol, li
+
+    translate = [
+        (r"<h1>([^<]+)</h1>", r""),
+        (r"<h2>([^<]+)</h2>", r"<b><i>\1</i></b>\n\n"),
+        (r"<h3>([^<]+)</h3>", r"<b>\1</b>\n\n"),
+        (r"<strong>([^<]+)</strong>", r"<b>\1</b>"),
+        (r"<em>([^<]+)</em>", r"<i>\1</i>"),
+        (r"<kbd>([^<]+)</kbd>", r"<code><b>\1</b></code>"),
+        (r"</a></p>", r"</a></p>\n"),
+        (r"<p>", r""),
+        (r"</p>", r"\n\n"),
+        (r"</(ol|ul)>(?!</(li|[ou]l)>)", r"</\1>\n"),
+    ]
+
+    with open("README.md", encoding="utf-8") as f:
+        html = "".join(filter(None, markdown(f.read()).split("\n")))
+
+    for a, b in translate:
+        html = re.sub(a, b, html)
+
+    with open("README.html", "w", encoding="utf-8") as f:
+        f.write(html.strip())
 
 
 @task()
@@ -169,7 +194,7 @@ def compile_ui(context):
 
 @task()
 def package(context):
-    readme_to_html()
+    readme_to_html(context)
     package_dev(context)
     remove_pycache()
     compress(context)
