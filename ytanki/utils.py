@@ -13,7 +13,7 @@ LINUX_MACOS_FFMPEG_CHECK_COMMAND = "ffmpeg --help"
 
 
 def get_windows_ffmpeg():
-    return os.path.join(home, "ffmpeg/ffmpeg.exe")
+    return os.path.join(home, "ffmpeg.exe")
 
 
 def get_ffmpeg():
@@ -22,7 +22,7 @@ def get_ffmpeg():
 
 def has_ffmpeg(command=LINUX_MACOS_FFMPEG_CHECK_COMMAND):
     if os.name == "nt":
-        return Path(os.path.join(home, "ffmpeg/ffmpeg.exe")).exists()
+        return Path(os.path.join(home, "ffmpeg.exe")).exists()
 
     try:
         check_output(command, shell=True)

@@ -88,6 +88,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             audio_field,
             picture_field,
         )
+        assert mw.col != None
         task = GenerateVideoTask(
             youtube_video_url,
             language,

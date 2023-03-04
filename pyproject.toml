@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "yt-to-anki"
-version = "0.1.0"
+version = "1.0.0"
 description = "Simple anki addon to generate decks from youtube videos"
 authors = ["Kamui <fin-kamui@pm.me>"]
 license = "GPL-v3"
@@ -12,11 +12,11 @@ webvtt-py = "^0.4.6"
 yt-dlp = {url = "https://github.com/ytdl-patched/yt-dlp/archive/refs/tags/2023.02.17.334.tar.gz"}
 
 [tool.poetry.group.dev.dependencies]
+aqt = {extras = ["qt5"], version = "==2.1.54"}
 invoke = "^2.0.0"
 black = "^23.1.0"
 pytest = "^7.2.1"
-aqt = {extras = ["qt5"], version = "^2.1.57"}
-coverage = "^7.1.0"
+pytest-cov = "^4.0.0"
 pre-commit = "^3.0.4"
 markdown2 = "^2.4.8"
 pyright = "^1.1.294"

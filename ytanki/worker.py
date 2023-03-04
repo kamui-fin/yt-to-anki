@@ -106,7 +106,6 @@ class GenerateCardsBar(ProgressBarDialog):
         self.gen_thread.finished.connect(self.finish_up)
         self.gen_thread.finish_time.connect(self.show_time)
         self.gen_thread.start()
-        pass
 
     def finish_up(self):
         self.gen_thread.stop()
@@ -128,26 +127,27 @@ class GenerateCardsBar(ProgressBarDialog):
         fields: FieldsConfiguration,
     ):
         deckId = mw.col.decks.id(title)
-        mw.col.decks.select(deckId)
-        basic_model = mw.col.models.byName(fields.note_type)
-        basic_model["did"] = deckId
-        mw.col.models.save(basic_model)
-        mw.col.models.setCurrent(basic_model)
-        senCard = mw.col.newNote()
-        senCard[fields.text_field] = subtitle_range.text
+        if deckId is not None:
+            mw.col.decks.select(deckId)
+            basic_model = mw.col.models.byName(fields.note_type)
+            basic_model["did"] = deckId
+            mw.col.models.save(basic_model)
+            mw.col.models.setCurrent(basic_model)
+            senCard = mw.col.newNote()
+            senCard[fields.text_field] = subtitle_range.text
 
-        # Audio
-        audiofname = mw.col.media.addFile(subtitle_range.audio_path)
-        ankiaudiofname = "[sound:%s]" % audiofname
-        senCard[fields.audio_field] = ankiaudiofname
+            # Audio
+            audiofname = mw.col.media.addFile(subtitle_range.audio_path)
+            ankiaudiofname = "[sound:%s]" % audiofname
+            senCard[fields.audio_field] = ankiaudiofname
 
-        # Picture
-        picfname = mw.col.media.addFile(subtitle_range.picture_path)
-        ankipicname = '<img src="%s">' % picfname
-        senCard[fields.picture_field] = ankipicname
+            # Picture
+            picfname = mw.col.media.addFile(subtitle_range.picture_path)
+            ankipicname = '<img src="%s">' % picfname
+            senCard[fields.picture_field] = ankipicname
 
-        mw.col.addNote(senCard)
-        mw.col.save()
+            mw.col.addNote(senCard)
+            mw.col.save()
 
 
 class GenerateCardsThread(QtCore.QThread):
