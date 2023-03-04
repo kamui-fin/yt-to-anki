@@ -9,7 +9,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10"
 webvtt-py = "^0.4.6"
-yt-dlp = {url = "https://github.com/ytdl-patched/yt-dlp/archive/refs/tags/2023.02.17.334.tar.gz"}
+yt-dlp = {url = "https://github.com/yt-dlp/yt-dlp/archive/master.tar.gz"}
 
 [tool.poetry.group.dev.dependencies]
 aqt = {extras = ["qt5"], version = "==2.1.54"}
