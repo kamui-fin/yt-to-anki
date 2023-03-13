@@ -23,6 +23,40 @@ class YouTubeClient:
         return bool(exp.match(link))
 
     @staticmethod
+    def get_subtitle_langs(link: str, fallback: bool):
+        def fetch_langs(captions):
+            info = {
+                lang_code: tracks[0]["name"]
+                for lang_code, tracks in captions.items()
+                if tracks
+            }
+            return {v: k for k, v in info.items()}
+
+        vid_opts = {
+            "skip_download": True,
+            "listsubtitles": True,
+            "no_color": True,
+            "no_warnings": True,
+            "quiet": True,
+        }
+        ydl = youtube_dl.YoutubeDL(vid_opts)
+        video_info = ydl.extract_info(link, download=False)
+        keys = list(video_info.keys())
+
+        if not video_info or (
+            "subtitles" not in keys and "automatic_captions" not in keys
+        ):
+            return {}
+
+        auto = fetch_langs(video_info["automatic_captions"])
+        manual = fetch_langs(video_info["subtitles"])
+
+        if not manual:
+            return auto if fallback else {}
+        else:
+            return manual
+
+    @staticmethod
     def download_video_files(
         video_task: GenerateVideoTask, on_progress
     ) -> YouTubeDownloadResult:
@@ -46,7 +80,7 @@ class YouTubeClient:
             subs = YouTubeSubtitlesExtractor.optimize_subtitles(subs)
 
         result = YouTubeDownloadResult(
-            title,
+            f"{title} - {video_task.language}",
             subs,
             path_to_video,
             path_to_subtitles_file,

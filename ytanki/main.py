@@ -6,7 +6,6 @@ from aqt.utils import showCritical
 
 
 from . import worker
-from .constants import LANGUAGES
 from .models import FieldsConfiguration, GenerateVideoTask
 from .utils import get_addon_directory, has_ffmpeg, bool_to_string, string_to_bool
 from .client_youtube import YouTubeClient
@@ -22,19 +21,37 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.settings = QtCore.QSettings(
             settings_path, QtCore.QSettings.Format.IniFormat
         )
+        self.list_langs_thread = None
 
     def setup_ui(self):
-        langs = list(LANGUAGES.keys())
         notes = self.get_note_types()
 
-        self.language_field.addItems(langs)
         self.note_type_field.addItems(notes)
 
         self.fill_fields(self.note_type_field.currentText())
 
         self.generate_button.clicked.connect(self.generate)
         self.note_type_field.currentTextChanged.connect(self.fill_fields)
+        self.link_input.textChanged.connect(self.update_langs)
+        self.fallback_checkbox.clicked.connect(self.update_langs)
         self.read_settings()
+
+    def update_langs(self, _):
+        link, is_fallback = self.link_input.text(), self.fallback_checkbox.isChecked()
+        if YouTubeClient.is_valid_link(link):
+            self.generate_button.setEnabled(False)
+            if self.list_langs_thread:
+                self.list_langs_thread.quit()
+
+            self.list_langs_thread = worker.ListSubtitleLanguages(link, is_fallback)
+            self.list_langs_thread.done.connect(self._update_langs)
+            self.list_langs_thread.start()
+
+    def _update_langs(self):
+        self.langs = self.list_langs_thread.langs
+        self.language_field.clear()
+        self.language_field.addItems(list(self.langs.keys()))
+        self.generate_button.setEnabled(True)
 
     def fill_fields(self, note_type):
         fields = self.get_fields_for_note(note_type)
@@ -63,8 +80,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if not YouTubeClient.is_valid_link(youtube_video_url):
             self.error("Invalid youtube link")
             return
+        if not self.language_field.currentText():
+            self.error("No language found. Consider enabling fallback.")
+            return
 
-        language = LANGUAGES[self.language_field.currentText()]
+        language = self.langs[self.language_field.currentText()]
         note_type = self.note_type_field.currentText()
         text_field = self.text_field.currentText()
         audio_field = self.audio_field.currentText()
@@ -103,11 +123,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def read_settings(self):
         self.settings.beginGroup("MainWindow")
-        self.link_input.setText(self.settings.value("video_url", ""))
-        self.language_field.setCurrentText(
-            self.settings.value("language_field", "English")
-        )
-
         self.note_type_field.setCurrentText(self.settings.value("note_type_field", ""))
         self.audio_field.setCurrentText(self.settings.value("audio_field", ""))
         self.picture_field.setCurrentText(self.settings.value("picture_field", ""))
@@ -128,9 +143,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def write_settings(self):
         self.settings.beginGroup("MainWindow")
-        self.settings.setValue("video_url", self.link_input.text())
-        self.settings.setValue("language_field", self.language_field.currentText())
-
         self.settings.setValue("note_type_field", self.note_type_field.currentText())
         self.settings.setValue("audio_field", self.audio_field.currentText())
         self.settings.setValue("picture_field", self.picture_field.currentText())

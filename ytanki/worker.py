@@ -3,7 +3,7 @@ import time
 from typing import List, Optional
 
 from PyQt5.QtCore import Qt
-from aqt import mw
+from aqt import QObject, mw
 from aqt.utils import showCritical, showInfo
 from PyQt5 import QtCore, QtWidgets
 
@@ -13,6 +13,20 @@ from .client_youtube import SubtitleRange, YouTubeClient, YouTubeDownloadResult
 from .models import FieldsConfiguration, GenerateVideoTask
 from .utils import with_limit
 from .ffmpeg import Ffmpeg
+
+
+class ListSubtitleLanguages(QtCore.QThread):
+    done = QtCore.pyqtSignal(bool)
+
+    def __init__(self, link: str, fallback: bool):
+        super().__init__()
+        self.link = link
+        self.fallback = fallback
+        self.langs = {}
+
+    def run(self):
+        self.langs = YouTubeClient.get_subtitle_langs(self.link, self.fallback)
+        self.done.emit(True)
 
 
 class ProgressBarDialog(QtWidgets.QDialog):
