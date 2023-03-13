@@ -132,9 +132,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.height_input.setValue(int(self.settings.value("height", 160)))
         self.limit_input.setValue(int(self.settings.value("limit", 0)))
 
-        self.fallback_checkbox.setChecked(
-            string_to_bool(self.settings.value("fallback", False))
-        )
         self.optimize_checkbox.setChecked(
             string_to_bool(self.settings.value("optimize_subtitles", False))
         )
@@ -152,9 +149,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.settings.setValue("height", self.height_input.value())
         self.settings.setValue("limit", self.limit_input.value())
 
-        self.settings.setValue(
-            "fallback", bool_to_string(self.fallback_checkbox.isChecked())
-        )
         self.settings.setValue(
             "optimize_subtitles",
             bool_to_string(self.optimize_checkbox.isChecked()),
