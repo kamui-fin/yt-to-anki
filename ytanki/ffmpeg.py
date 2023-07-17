@@ -1,5 +1,5 @@
 from pathlib import Path
-from subprocess import check_output
+import subprocess
 import tempfile
 
 from .utils import get_ffmpeg
@@ -22,7 +22,7 @@ class Ffmpeg:
     def get_picture(self, dimensions):
         picture_command = (
             self.ffmpeg
-            + " -y "  # Overwrite output file.
+            + " -y "
             + " -ss "
             + str(self.subtitle.time_start.time())
             + " -i "
@@ -37,12 +37,12 @@ class Ffmpeg:
             + self.picture_path
             + '"'
         )
-        check_output(picture_command, shell=True)
+        subprocess.run(picture_command, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT, shell=True, creationflags=subprocess.CREATE_NO_WINDOW)
 
     def get_audio(self):
         audio_command = (
             self.ffmpeg
-            + " -y "  # Overwrite output file.
+            + " -y "
             + " -ss "
             + str(self.subtitle.time_start.time())
             + " -i "
@@ -56,7 +56,7 @@ class Ffmpeg:
             + self.audio_path
             + '"'
         )
-        check_output(audio_command, shell=True)
+        subprocess.run(audio_command, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT, shell=True, creationflags=subprocess.CREATE_NO_WINDOW)
 
     # mutates object, bad practice?
     def fill_sub_media(self):
