@@ -43,6 +43,14 @@ class ProgressBarDialog(QtWidgets.QDialog):
         self.progress_bar.setValue(0)
         self.show()
 
+    def closeEvent(self, event):
+        if hasattr(self, 'gen_thread') and self.gen_thread.isRunning():
+            # Stop the thread
+            self.gen_thread.stop()
+            # Wait until it actually finishes
+            while self.gen_thread.isRunning():
+                time.sleep(0.1)
+        event.accept()
 
 class DownloadYouTubeVideoBar(ProgressBarDialog):
     def __init__(self):
@@ -179,6 +187,7 @@ class GenerateCardsThread(QtCore.QThread):
         self.task: GenerateVideoTask = task
         self.youtube_download_result: YouTubeDownloadResult = youtube_download_result
         self.stop_flag = False
+        self.generated_cards_count = 0
 
     def stop(self):
         self.stop_flag = True
@@ -203,8 +212,8 @@ class GenerateCardsThread(QtCore.QThread):
             except:
                 continue
 
-            count += 1
-            percent = int((count / len(subtitles)) * 100)
+            self.generated_cards_count += 1
+            percent = int((self.generated_cards_count / len(subtitles)) * 100)
             self.update_num.emit(percent)
 
             self.add_to_deck_signal.emit(
@@ -217,8 +226,7 @@ class GenerateCardsThread(QtCore.QThread):
         finished_time = timer_end - timer_start
 
         self.finished.emit(True)
-        self.finish_time.emit(finished_time, len(subtitles))
-
+        self.finish_time.emit(finished_time, self.generated_cards_count)
 
 def create_deck(task: GenerateVideoTask):
     dl_bar = DownloadYouTubeVideoBar()
