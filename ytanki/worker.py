@@ -44,13 +44,14 @@ class ProgressBarDialog(QtWidgets.QDialog):
         self.show()
 
     def closeEvent(self, event):
-        if hasattr(self, 'gen_thread') and self.gen_thread.isRunning():
+        if hasattr(self, "gen_thread") and self.gen_thread.isRunning():
             # Stop the thread
             self.gen_thread.stop()
             # Wait until it actually finishes
             while self.gen_thread.isRunning():
                 time.sleep(0.1)
         event.accept()
+
 
 class DownloadYouTubeVideoBar(ProgressBarDialog):
     def __init__(self):
@@ -227,6 +228,7 @@ class GenerateCardsThread(QtCore.QThread):
 
         self.finished.emit(True)
         self.finish_time.emit(finished_time, self.generated_cards_count)
+
 
 def create_deck(task: GenerateVideoTask):
     dl_bar = DownloadYouTubeVideoBar()

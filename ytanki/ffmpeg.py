@@ -37,7 +37,13 @@ class Ffmpeg:
             + self.picture_path
             + '"'
         )
-        subprocess.run(picture_command, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT, shell=True, creationflags=subprocess.CREATE_NO_WINDOW)
+        subprocess.run(
+            picture_command,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.STDOUT,
+            shell=True,
+            creationflags=subprocess.CREATE_NO_WINDOW,  # type: ignore
+        )
 
     def get_audio(self):
         audio_command = (
@@ -56,7 +62,13 @@ class Ffmpeg:
             + self.audio_path
             + '"'
         )
-        subprocess.run(audio_command, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT, shell=True, creationflags=subprocess.CREATE_NO_WINDOW)
+        subprocess.run(
+            audio_command,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.STDOUT,
+            shell=True,
+            creationflags=subprocess.CREATE_NO_WINDOW,  # type: ignore
+        )
 
     # mutates object, bad practice?
     def fill_sub_media(self):
