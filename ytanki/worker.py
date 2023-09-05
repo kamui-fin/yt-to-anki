@@ -111,6 +111,9 @@ class DownloadYouTubeVideoThread(QtCore.QThread):
             self.error_message = (
                 "Man-made subtitles could not be found. Consider enabling fallback."
             )
+        except Exception as e:
+            self.is_error.emit(True)
+            self.error_message = f"An unexpected error has occured. {e}"
 
 
 class GenerateCardsBar(ProgressBarDialog):
@@ -194,7 +197,6 @@ class GenerateCardsThread(QtCore.QThread):
         self.stop_flag = True
 
     def run(self):
-        count = 0
         timer_start = time.perf_counter()
         subtitles: List[SubtitleRange] = with_limit(
             self.youtube_download_result.subtitles, self.task.limit
@@ -210,7 +212,7 @@ class GenerateCardsThread(QtCore.QThread):
             )
             try:
                 ffmpeg.generate_media(self.task.dimensions)
-            except:
+            except Exception as e:
                 continue
 
             self.generated_cards_count += 1

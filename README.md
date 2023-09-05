@@ -20,10 +20,9 @@ If you are a Linux or Mac user, make sure to install `ffmpeg` using your package
 ## Usage
 
 1. Enter the YouTube link for the video
-2. Set an output folder for the audio and screenshots to go (can also be used for condensed audio)
-3. Choose the appropriate note type and fields for the card data
-4. Specify the subtitle language (default: English)
-5. Hit generate. After a bit, refresh your decks, and you should see a deck named after the title of the video
+2. Choose the appropriate note type and fields for the card data
+3. Specify the subtitle language (default: English)
+4. Hit generate. After a bit, refresh your decks, and you should see a deck named after the title of the video
 
 ## Quality of the subtitles
 

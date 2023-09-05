@@ -28,7 +28,7 @@ class YouTubeClient:
             info = {
                 lang_code: tracks[0]["name"]
                 for lang_code, tracks in captions.items()
-                if tracks
+                if tracks and "name" in tracks[0]
             }
             return {v: k for k, v in info.items()}
 

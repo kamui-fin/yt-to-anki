@@ -119,7 +119,7 @@ def bundle_libs(context):
     venv_location = (
         Path(run_invoke_cmd(context, "poetry env info -p").stdout.strip())
         / "lib"
-        / "python3.10"  # TODO: dynamically find this directory
+        / "python3.11"  # TODO: dynamically find this directory
         / "site-packages"
     )
     deps = ["webvtt", "yt_dlp"]

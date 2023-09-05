@@ -1,6 +1,7 @@
 from pathlib import Path
 import subprocess
 import tempfile
+import os
 
 from .utils import get_ffmpeg
 
@@ -37,12 +38,17 @@ class Ffmpeg:
             + self.picture_path
             + '"'
         )
+        if os.name == "nt":
+            extra_opts = {creationflags: subprocess.CREATE_NO_WINDOW}
+        else:
+            extra_opts = {}
+
         subprocess.run(
             picture_command,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.STDOUT,
             shell=True,
-            creationflags=subprocess.CREATE_NO_WINDOW,  # type: ignore
+            **extra_opts,
         )
 
     def get_audio(self):
@@ -62,12 +68,17 @@ class Ffmpeg:
             + self.audio_path
             + '"'
         )
+        if os.name == "nt":
+            extra_opts = {creationflags: subprocess.CREATE_NO_WINDOW}
+        else:
+            extra_opts = {}
+
         subprocess.run(
             audio_command,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.STDOUT,
             shell=True,
-            creationflags=subprocess.CREATE_NO_WINDOW,  # type: ignore
+            **extra_opts,
         )
 
     # mutates object, bad practice?

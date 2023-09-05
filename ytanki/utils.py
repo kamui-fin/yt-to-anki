@@ -1,15 +1,13 @@
 import os
 import datetime
 from subprocess import check_output, CalledProcessError
+import platform
+import subprocess
 from pathlib import Path
 from typing import List
 
 
 home = os.path.dirname(os.path.abspath(__file__))
-
-# For Linux and macOS, check if the ffmpeg is present in the PATH.
-# Running with --help because without, ffmpeg exists with non-zero.
-LINUX_MACOS_FFMPEG_CHECK_COMMAND = "ffmpeg --help"
 
 
 def get_windows_ffmpeg():
@@ -20,14 +18,26 @@ def get_ffmpeg():
     return get_windows_ffmpeg() if os.name == "nt" else "ffmpeg"
 
 
-def has_ffmpeg(command=LINUX_MACOS_FFMPEG_CHECK_COMMAND):
+def has_ffmpeg():
     if os.name == "nt":
         return Path(os.path.join(home, "ffmpeg.exe")).exists()
+    else:
+        try:
+            subprocess.run(
+                ["which", "ffmpeg"],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=True,
+            )
+            return True
+        except subprocess.CalledProcessError:
+            pass
 
-    try:
-        check_output(command, shell=True)
-        return True
-    except (FileNotFoundError, CalledProcessError):
+        if platform.system() == "Darwin":
+            brew_ffmpeg_path = "/usr/local/bin/ffmpeg"
+            if os.path.exists(brew_ffmpeg_path):
+                return True
+
         return False
 
 

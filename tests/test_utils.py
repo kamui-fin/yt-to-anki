@@ -1,9 +1,4 @@
 from ytanki.client_youtube import YouTubeClient
-from ytanki.utils import has_ffmpeg
-
-
-def test_ffmpeg_does_not_exist():
-    assert not has_ffmpeg("invalid_executable")
 
 
 def test_yt_link_matching():
