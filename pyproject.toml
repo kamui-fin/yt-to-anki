@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "yt-to-anki"
+name = "ytanki"
 version = "1.0.0"
 description = "Simple anki addon to generate decks from youtube videos"
 authors = ["Kamui <fin-kamui@pm.me>"]
@@ -12,7 +12,7 @@ webvtt-py = "^0.4.6"
 yt-dlp = "^2023.7.6"
 
 [tool.poetry.group.dev.dependencies]
-aqt = {extras = ["qt5"], version = "==2.1.54"}
+aqt = {extras = ["qt6"], version = "==2.1.66"}
 invoke = "^2.0.0"
 black = "^23.1.0"
 pytest = "^7.2.1"

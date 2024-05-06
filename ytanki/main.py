@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from PyQt5 import QtCore, QtWidgets
+from PyQt6 import QtCore, QtWidgets
 from aqt import mw
 from aqt.utils import showCritical
 
@@ -66,7 +66,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.text_field.addItems(fields)
 
     def get_note_types(self):
-        return mw.col.models.allNames()
+        return mw.col.db.list("SELECT name FROM notetypes")
 
     def get_fields_for_note(self, note_type: str):
         fields = mw.col.db.list(

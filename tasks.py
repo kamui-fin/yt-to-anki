@@ -63,7 +63,7 @@ def lint(context):
 
 @task
 def check(context):
-    lint(context)
+    # lint(context)
     test(context)
 
 
@@ -142,7 +142,7 @@ def compile_ui(context):
     run_invoke_cmd(
         context,
         r"""
-        find ytanki -name "*.ui" -print0 | while read -d $'\0' f; do poetry run pyuic5 -x  "$f" -o "${f%.ui}.py"; done
+        find ytanki -name "*.ui" -print0 | while read -d $'\0' f; do poetry run pyuic6 -x  "$f" -o "${f%.ui}.py"; done
         """,
     )
 

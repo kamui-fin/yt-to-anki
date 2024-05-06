@@ -2,10 +2,11 @@ import re
 import time
 from typing import List, Optional
 
-from PyQt5.QtCore import Qt
+from PyQt6.QtCore import Qt
 from aqt import QObject, mw
+from anki.notes import Note
 from aqt.utils import showCritical, showInfo
-from PyQt5 import QtCore, QtWidgets
+from PyQt6 import QtCore, QtWidgets
 
 
 from .errors import NoSubtitlesException
@@ -152,28 +153,31 @@ class GenerateCardsBar(ProgressBarDialog):
         title: str,
         fields: FieldsConfiguration,
     ):
+        col = mw.col
+
         deckId = mw.col.decks.id(title)
         assert deckId
-        mw.col.decks.select(deckId)
-        basic_model = mw.col.models.byName(fields.note_type)
-        basic_model["did"] = deckId
-        mw.col.models.save(basic_model)
-        mw.col.models.setCurrent(basic_model)
-        senCard = mw.col.newNote()
-        senCard[fields.text_field] = subtitle_range.text
+
+        note_id = mw.col.models.id_for_name(fields.note_type)
+        new_note = mw.col.models.get(note_id)
+        new_note = col.new_note(new_note)
+
+        new_note[fields.text_field] = subtitle_range.text
 
         # Audio
-        audiofname = mw.col.media.addFile(subtitle_range.audio_path)
-        ankiaudiofname = "[sound:%s]" % audiofname
-        senCard[fields.audio_field] = ankiaudiofname
+        if fields.audio_field is not None:
+            audiofname = mw.col.media.add_file(subtitle_range.audio_path)
+            ankiaudiofname = "[sound:%s]" % audiofname
+            new_note[fields.audio_field] = ankiaudiofname
 
         # Picture
-        picfname = mw.col.media.addFile(subtitle_range.picture_path)
-        ankipicname = '<img src="%s">' % picfname
-        senCard[fields.picture_field] = ankipicname
+        # add file to media
+        if fields.picture_field is not None:
+            picfname = mw.col.media.add_file(subtitle_range.picture_path)
+            ankipicname = '<img src="%s">' % picfname
+            new_note[fields.picture_field] = ankipicname
 
-        mw.col.addNote(senCard)
-        mw.col.save()
+        col.add_note(new_note, deckId)
 
 
 class GenerateCardsThread(QtCore.QThread):
