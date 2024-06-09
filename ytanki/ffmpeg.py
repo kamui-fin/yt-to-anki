@@ -39,14 +39,14 @@ class Ffmpeg:
             + '"'
         )
         if os.name == "nt":
-            extra_opts = {creationflags: subprocess.CREATE_NO_WINDOW}
+            extra_opts = {"creationflags": subprocess.CREATE_NO_WINDOW}
         else:
             extra_opts = {}
 
         subprocess.run(
             picture_command,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.STDOUT,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
             shell=True,
             **extra_opts,
         )
@@ -69,14 +69,14 @@ class Ffmpeg:
             + '"'
         )
         if os.name == "nt":
-            extra_opts = {creationflags: subprocess.CREATE_NO_WINDOW}
+            extra_opts = {"creationflags": subprocess.CREATE_NO_WINDOW}
         else:
             extra_opts = {}
 
         subprocess.run(
             audio_command,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.STDOUT,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
             shell=True,
             **extra_opts,
         )
